@@ -3,7 +3,7 @@
 
 主要领域 LLM，Video, Low-level Vision, Reinfercement Learning
 
-Organize some of my insights and paper reading records. Total Count：47
+Organize some of my insights and paper reading records. Total Count：50
 ## LLM
 ### 2024 - [ToolChain*: Efficient Action Space Navigation in Large Language Models with A* Search](https://arxiv.org/pdf/2310.13227.pdf)
   * LLM 的 A*。A* 每次是根据 g(n) 和 h(n) 来选路线的，不需要等模型执行完全过程；在 a* 算法中， 通常我们也会将距离称为代价f，和起点的距离称为历史代价g，和终点的距离称为未来预期代价h ，f=g+h 。距离最近也就是代价最小，就是（g+h）最小。
