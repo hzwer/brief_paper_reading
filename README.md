@@ -3,7 +3,7 @@
 
 主要领域 LLM，Video, Low-level Vision, Reinfercement Learning
 
-Organize some of my insights and paper reading records. Total Count：38
+Organize some of my insights and paper reading records. Total Count：39
 ## LLM
 ### 2024 - [ToolChain*: Efficient Action Space Navigation in Large Language Models with A* Search](https://arxiv.org/pdf/2310.13227.pdf)
   * LLM 的 A*。A* 每次是根据 g(n) 和 h(n) 来选路线的，不需要等模型执行完全过程；在 a* 算法中， 通常我们也会将距离称为代价f，和起点的距离称为历史代价g，和终点的距离称为未来预期代价h ，f=g+h 。距离最近也就是代价最小，就是（g+h）最小。
@@ -30,7 +30,7 @@ Organize some of my insights and paper reading records. Total Count：38
   * MarioGPT 已经可以直接生成关卡，但我们不仅要生成具有不同物理特征的关卡，而且要生成让玩家能觉得有趣的关卡
   * 维护一个关卡集合（起始 30 个），生成新的关卡后拿 A* 算法评估通关轨迹，看看相比集合中的有没有新颖度，生成的方法也是渐进地变异杂交
   * 为了测试可玩性，研究者在 250 个关卡中部署了 Robin Baumgarten 的 A* agent。研究者发现，所有 MarioGPT 生成的关卡中，88.33% 可以由 agent 完成
-### 2023 - [A Comparative Study between Full-Parameter and LoRA-based Fine-Tuning on Chinese Instruction Data for Instruction Following Large Language Model ](https://github.com/LianjiaTech/BELLE/blob/main/docs/A%20Comparative%20Study%20between%20Full-Parameter%20and%20LoRA-based.pdf)
+### 2023 - [A Comparative Study between Full-Parameter and LoRA-based Fine-Tuning on Chinese Instruction Data for Instruction Following Large Language Model](https://github.com/LianjiaTech/BELLE/blob/main/docs/A%20Comparative%20Study%20between%20Full-Parameter%20and%20LoRA-based.pdf)
   * belle 团队探讨了全参数 sft 和 lora sft 的效果差异，讨论了训练开销和模型性能之间的取舍
   * 比较显著的差异是学习率，lora sft 可以使用 40x 的学习率
   * [想法] lora 上做研究可能会很快达到瓶颈，最后大家被迫选择全参数 
@@ -110,7 +110,13 @@ Organize some of my insights and paper reading records. Total Count：38
   * 视频预测，OPT 提出在 Vimeo90K 训练集训练出的插帧模型都能当合理的 loss 度量，跨数据集也泛化得不错，那直接在 Vimeo90K 上训练外插模型应该性能也会很好
   * 整合一些插帧算法的光流估计设计思路，多尺度多阶段地去把目标帧到输入帧的光流估计出来，然后用光流 warping 和遮挡 mask 去混合输入帧，loss 方面用 deep supervision 做一下
   * 有的帧可能有高速行驶的车辆，有的帧可能就是静态的场景，用相同的结构一起做显然是浪费，于是设计出一个能自动跳过一些 block 的网络
-  * 经过动态设计，模型推理又能无痛省一半计算量 
+  * 经过动态设计，模型推理又能无痛省一半计算量
+### 2022 - [What Makes RAFT Better Than PWC-Net?](https://arxiv.org/pdf/2203.10712.pdf)
+  * 研究三个经典网络光流估计的结构 ：PWC-Net, IRR-PWC 和 RAFT，在现代的训练技巧下，各种操作带来的提点
+  * 只要参数好好调，PWC-Net 的 loss 可以下降到原来的一半（不比 RAFT 差多少）；然后把发现的这些训练 trick 灌给 RAFT，能获得新的 SOTA
+  * 宣称PWC-Net 显存开销小，适合做 4k 光流，而且小运动可能做的好点（猜测是 RAFT 8 倍下采样导致）
+  * 感觉重要的只有把数据集换成 AutoFlow 和调学习率，还有就是暴力，训几倍时间，没观察到过拟合
+  * [想法] 光流估计真的很 data-driven，模型结构设计的收益有点差，甚至不如一直训下去
 ### 2022 - [Unifying Flow, Stereo and Depth Estimation](https://arxiv.org/pdf/2211.05783.pdf)
   * CVPR22-GMFlow 的期刊版本，将 GMFlow 架构从光流扩展到立体匹配和深度估计
   * 考虑到这几个任务具有内在联系，但目前的模型结构各异，体现在 cost volume 光流是 2D，立体匹配是 1D，作者用统一的框架来解决这些问题
@@ -151,7 +157,16 @@ ambiguity to the occluded areas and breaks the symmetricity of the feature match
   * 提出了四个改进，包括归一化 costvolumn，遮挡估计时中断梯度，在resize前的光流上加平滑正则，以及自监督训练
   * smoothness，本文推荐使用 edge-aware，鼓励光流和图片有比较一致的边缘
   * 自监督，先对一个 pair 预测光流（teacher），再在图片上加增广预测光流（student），在两个光流之间加自监督 loss，loss 只向 student flow 上传播
-### 2019 - [Depth-Aware Video Frame Interpolation ](https://discourse.brainpp.cn/t/topic/18874/2)
+### 2020 - [RAFT: Recurrent All-Pairs Field Transforms for Optical Flow](https://discourse.brainpp.cn/t/topic/50779)
+  * 光流 best paper
+  * 代码比较难懂的就是 core/corr.py 里面，用 grid_sample 实现 lookup 的部分，解读线索是时刻想着对于 I0 的一个像素点 (x,y)，要去 I1 中找 (x + Fx, y + Fy) 的邻域，想办法把它变成一个查表
+  * 实验都非常标准，亮点是训练快，且只需要 epe loss 就基本足够了
+  * 在 RAFT 的结构设计下，tied weights 比 untied weights 点高，我感觉和作者用了 convGRU 是有关的，通常卷积网络加参数都不太亏。multi scale 和 context 都发挥了挺大作用。lookup radius = 1 掉点不多
+  * [想法] RAFT 抛弃了前几年光流估计网络中各种莫名其妙的 trick，但在性能上实现了大幅超越
+  * [想法] 据说 RAFT 特点是在 training 时拟合的特别快（因此需要加强增广来提高泛化）：RAFT 看起来工程 trick 少，augmentation 堆的却不少，这部分据说贡献了一半的涨点
+  * [想法] 我个人感觉，以往的 warp + cost volume 做法没有这种 lookup 直接，然后 lookup 又能通过多级查找来起一种在 dilated feature 上合并查询一般的效果，所以才涨的点
+  * [想法] 近来人们发现光流算法比点大部分就是在比谁遮挡区域解的好，其实是在 overfit 歧义区域吗？
+### 2019 - [Depth-Aware Video Frame Interpolation](https://discourse.brainpp.cn/t/topic/18874/2)
   * 在用光流图插帧的时候，考虑图片的深度，即显式地建模遮挡
   * 把 hierarchical features 整合进 Frame Synthesis 网络来提升性能，同时期很多人这么干
   * 训练集是 vimeo90k，训练的时候只预测 t = 0.5，测试时在任意 t 上测试，40 epoch，单卡训了 5 天，参数量是 24M，runtime 为 0.13s（640 × 480)
