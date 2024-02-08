@@ -44,7 +44,7 @@ Organize some of my insights and paper reading records. Total Count：47
   * 要在三个多月用千卡 A100 训练一个 175B 的模型，其中完整训练需要 33 天；团队有五个人，还加上一些云服务商支持
   * 硬件故障：35次手动重启，100卡出故障被移除
   * Loss 时常训飞，每当训飞的时候，降低学习率，加载上一个 checkpoint
-  * learning rate 长成人肉 PID 状
+  * 人肉 PID learning rate
   * 权重初始化和 Megatron-LM 开源的代码中保持一致，使用了均值 0 标准差 0.006 的分布来初始化，输出层的标准差用 1.0/开根号(2L) 来做缩放，L是总共的层数
   * 使用 AdamW 作为优化器，(β1,β2) = (0.9,0.95)，weight decay 是 0.1（默认是 0.01，据说在大模型训练时偏小）
   * 作者发现 gradient clipping 一般在 0.2 左右，所以直接用 clip 0.3 来稳定训练
@@ -223,6 +223,11 @@ ambiguity to the occluded areas and breaks the symmetricity of the feature match
   * 作者认为 vgg 由于存在大量的 maxpooling，对于不对齐应该是不敏感的，于是分析了一下能否用某一层的 feature 来计算 loss
   * 用 conv5_2 计算 loss，训练结果接近 contextual loss（这个 loss 的计算量巨大）
   * [想法] misalign 的问题我思考了好久，没想到用 perceptual loss 就能解的这么好
+### 2019 - [Towards Optimal Structured CNN Pruning via Generative Adversarial Learning](https://arxiv.org/pdf/1903.09291.pdf)
+  * 一篇比较早的 CNN 剪枝文章，提出 GAL（Generative Adversarial Learning）；用 softmask 来剪去一些 CNN 分支，用判别器来计算剪枝前后 feature 上的 loss；这个操作在 MEALv2 后被大家熟知
+  * 基于GAL的剪枝策略，能够在对抗学习过程中避免标注的使用；其次，Soft Pruning Mask 使正则化过程变得更加松弛、更容易学习收敛；另外，对抗训练与正则化过程是端到端的、非逐层的（作者认为这是一个优点）。
+  * 在对抗学习过程中，Baseline的参数固定，而剪枝模型参数、soft mask以及判别器参数在训练中更新。
+  * 训练过程主要包含两个交替的阶段：第一个阶段固定生成器和mask，通过对抗训练更新判别器D，损失函数包含对抗损失与对抗正则项；第二阶段固定判决器，更新生成器与mask，损失函数包含对抗损失中的生成器与baseline特征输出的MSE损失以及生成器和mask的正则项。最终，根据mask的阈值和门控方式，对channel、branch或block进行剪枝，从而实现模型的压缩。
 ## Reinforcement Learning
 ### 2023 - [Learning About Progress From Experts](https://openreview.net/pdf?id=sKc6fgce1zs)
   * 强化学习，nethack 这类流程步骤非常长的游戏，直接从显式奖励中并不好学习，本文提出专家的示例隐含着对游戏进程推进的指示信息，可以先从专家的游戏视频中学出一个指示游戏进程的 progress model，来提供 reward
@@ -237,11 +242,16 @@ ambiguity to the occluded areas and breaks the symmetricity of the feature match
   * 还有一个改进是作者认为 critic 直接回归值不够好，改成回归分布
   * 使模型完全可以离线训练，replayed step 倍数越大，训的越好
   * 大 policy 模型不仅上限高，而且数据效率也高
-### 2023 - [Become a Proficient Player with Limited Data through Watching Pure Videos ](https://openreview.net/forum?id=Sy-o2N0hF4f)
+### 2023 - [Become a Proficient Player with Limited Data through Watching Pure Videos](https://openreview.net/forum?id=Sy-o2N0hF4f)
   * 提供了一种从纯 video 预训练强化学习模型的方法
   * 专门收集数据贵，只看 video 来预训练会更方便，核心就是构建某种无监督 consistency，在 atari 任务上训练
   * 预训练的时候不用真的去拟合动作空间，只要学一个动作隐空间即可，finetune 的时候再学，构建重建和前后一致性的 loss
   * [想法] 感觉还挺靠谱的，技术上的贡献比较扎实
+### 2022 - [NeoRL: A Near Real-World Benchmark for Offline Reinforcement Learning](https://arxiv.org/pdf/2102.00714.pdf)
+  * 本文收集了一些 benchmark，做了比较大规模的 offline RL 算法评测，结论是在 online evaluation（模拟场景中测试和训练）中，只有一个 CQL 算法比 naive baseline 好，而用来现实部署时，性能基本是随机的
+  * 作者认为现有框架中存在的问题：1. Conservative data：因为采集成本的原因，在数据采集时，操作通常是保守的 2.Limited available data：有的时候，用户数据就是很难大量拿到 3.Highly stochastic environments 现实世界固有的 stochastic nature 4. Offline evaluation before deployment：说白了很多 RL benchmark 就是在 overfit
+  * 在 Online Model Selection 中，CQL [Kumar et al., 2020] 算法显著好。而在 Offline Model Selection，作者得出的结论是，即使挑选了在 Online Model Selection 中最好的一部分模型，它们看起来也和随机的性能相当
+  * [想法] 落地部分有太多的脏活要干，人们对它们知之甚少，因此现在困在铁屋子里。现实世界依然只有推荐系统，AI 这类 overfit 的场景才好上 RL
 ### 2022 - [Video PreTraining (VPT): Learning to Act by Watching Unlabeled Online Videos](https://openreview.net/pdf?id=AXDNM76T1nc)
   * 这篇论文研究了如何用大量的 minecraft 未标注游戏视频来帮助强化学习，实现一些非常难的任务（比如挖钻石）
   * 这篇 paper 有 9 个作者，说是至少都全职投入了半年，完整训练一次需要 “9 days on 720 V100 GPUs”，附录二十多页
@@ -285,6 +295,13 @@ ambiguity to the occluded areas and breaks the symmetricity of the feature match
   * 图 A，图 B，G(B)，让 A 和 G(B) 外观像，B 和 G(B) 结构像（设计了两种基于预训练的 dino 的 loss，简单理解就是初版 styletransfer）
   * [想法] G 可以很容易地适应不同的B，但是目前因为 A 不是 G 的一个输入，还不能 general 地生成 G(A, B)
 ## Others
+### 2021 - [D^2LV: A Data-Driven and Local-Verification Approach for Image Copy Detection](https://arxiv.org/pdf/2111.07090.pdf)
+  * 比赛报告，这个比赛给了一个 query 集（5w张）和 ref 集（100w张），问 query 集的每一张图片，是否抄袭了 ref 集 (Copy detection)，抄袭定义为用 ref 集的某张图做素材，ps 进自己的图里，给出置信度
+  * 这是一个变种的图像检索任务，第一名的方案除了比较标准的预训练 + 对比学习以外，用了大量的图像增广和非常疯狂的 ensemble 策略
+  * 作者说虽然用无监督训练的方法直接解 copy detection 是自然的，但是由于两个原因放弃了 1）原始BYOL 8卡训了两周，再加点增广可能就做不起了 2）训不出来。所以作者用了原始的 BYOL 和 Barlow Twins 预训练模型
+  * 几十种数据增广，真的很疯狂
+  * 最终作者用了 33 个模型集成（包括不同大小的 resnet 和 IBN 变种），在 3 个图像尺度下多对一查询，图片一对多查询实在做不起了，只跑了三个模型
+  * [想法] 我起初完全没想到这个比赛能把 AP 刷到 90+，还是低估了暴力的威力
 ### 2021 - [Simple but Effective: CLIP Embeddings for Embodied AI](https://arxiv.org/pdf/2111.09888.pdf)
   * CLIP 的 ResNet50 放在 Embodied AI 的一众下游任务上，可以达到降维打击的效果。Embodied AI 主要是关注机器人和环境的交互
   * 分析 CLIP 相对 imagenet 训练模型的优势，通过研究四个基础任务 “object presence, object presence at a location, object reachability, and free space”
