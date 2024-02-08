@@ -3,7 +3,7 @@
 
 主要领域 LLM，Video, Low-level Vision, Reinfercement Learning
 
-Organize some of my insights and paper reading records. Total Count：43
+Organize some of my insights and paper reading records. Total Count：45
 ## LLM
 ### 2024 - [ToolChain*: Efficient Action Space Navigation in Large Language Models with A* Search](https://arxiv.org/pdf/2310.13227.pdf)
   * LLM 的 A*。A* 每次是根据 g(n) 和 h(n) 来选路线的，不需要等模型执行完全过程；在 a* 算法中， 通常我们也会将距离称为代价f，和起点的距离称为历史代价g，和终点的距离称为未来预期代价h ，f=g+h 。距离最近也就是代价最小，就是（g+h）最小。
@@ -196,6 +196,14 @@ ambiguity to the occluded areas and breaks the symmetricity of the feature match
   * 直接在FlyingThings3D训不好，先在FlyingChairs上训，再在FlyingThings3D上finetune比较好
   * 尝试用得到的光流来辅助 motion segmentation 和 action recognition 的模型
 ## Low-Level Vision
+### 2022 - [Zero-Shot Text-Guided Object Generation with Dream Fields](https://arxiv.org/abs/2112.01455)
+  * 本文训练了一个 NeRF + CLIP，根据输入的自然语言生成 3d 辐射场，主要技术点是研究怎么对生成过程进行合理约束。
+  * 模型用的是一个简化版的 NeRF，输入一个 position x，多层 MLP 输出 density 和 color（漫反射），训练中每次随机一个 view，渲染一张图片，损失函数主要是由预训练的 CLIP 模型来给出 text 和某个视角下生成结果的距离。
+  * 每次把图片喂给 CLIP 前，加一个随机的背景。作者设计了三种背景生成方式。去掉这个 trick 以后，生成的体素倾向于散开。
+作者还显式约束了 mean density，加了一项比较简单的 loss。
+  * 100K iterations 需要 8TPU 跑 72min，但跑 4K 的时候已经不错效果了
+  * 注意到一个 CLIP 模型（比如 B/32) 指导的生成过程，会对这个 CLIP 过拟合，换一个 CLIP 点就差别很大
+  * 不借助预训练的生成模型，直接优化 CLIP loss 就能做生成，近期有很多类似工作
 ### 2022 - [Simple Baselines for Image Restoration ](https://arxiv.org/abs/2204.04676)
   * 提出一个图像修复的简单基线模型，核心是带 layernorm 的深层模型和本文提出的非线性无激活组件（用乘法代替激活函数）
   * NAFNet 的核心是 layernorm 和 simplegate (Gate(X, f, g, σ) = f(X) ⊙ σ(g(X)))
@@ -205,6 +213,10 @@ ambiguity to the occluded areas and breaks the symmetricity of the feature match
   * 把重参数化放到 SR 里，很多类似 paper
   * 在超分上，BN 的统计量有点问题，观察训练曲线，发现 validation 时常爆炸，train curve 一直很正常
   * 在训练最后阶段用 population 统计量代替 mini-batch 统计量（我理解就是把 BN 切换成 eval 模式再微调），涨了一些点
+### 2020 - [Reference-Based Sketch Image Colorization using Augmented-Self Reference and Dense Semantic Correspondence](https://arxiv.org/pdf/2005.05207.pdf)
+  * sketch 上色的一个流派，reference-based
+  * 一张图不知道怎么找参考图的时候，就把自身做一些增广以后当参考图
+  * 本文设计的 spatially corresponding feature transfer module 可能能用于其它任务
 ### 2019 - [Single Image Reﬂection Removal Exploiting Misaligned Training Data and Network Enhancements](https://openaccess.thecvf.com/content_CVPR_2019/papers/Wei_Single_Image_Reflection_Removal_Exploiting_Misaligned_Training_Data_and_Network_CVPR_2019_paper.pdf)
   * 一篇做图片去反射的问题，主要提高了模型在真实数据上的表现
   * 亮点主要在损失函数部分，提出了对于不对齐的训练数据计算损失函数的一些方法
