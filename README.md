@@ -1,7 +1,7 @@
 # brief_paper_reading
 主要是记录一些这几年读的 paper，持续搬运中，欢迎指正
 
-Organize some of my insights and paper reading records. Total Count：31
+Organize some of my insights and paper reading records. Total Count：33
 ## LLM
 * 2024 - [ToolChain*: Efficient Action Space Navigation in Large Language Models with A* Search](https://arxiv.org/pdf/2310.13227.pdf)
   * LLM 的 A*。A* 每次是根据 g(n) 和 h(n) 来选路线的，不需要等模型执行完全过程；在 a* 算法中， 通常我们也会将距离称为代价f，和起点的距离称为历史代价g，和终点的距离称为未来预期代价h ，f=g+h 。距离最近也就是代价最小，就是（g+h）最小。
@@ -109,6 +109,17 @@ Organize some of my insights and paper reading records. Total Count：31
   * 关于分组，论文说：Multi-head attention allows the model to jointly attend to information from different representation subspaces.
   * 对比 inception 和 ResNeXt，可以看到 ResNeXt 的分支是同构的
 ## Video
+* 2023 - [A Dynamic Multi-Scale Voxel Flow Network for Video Prediction](https://arxiv.org/abs/2303.09875)
+  * 视频预测，OPT 提出在 Vimeo90K 训练集训练出的插帧模型都能当合理的 loss 度量，跨数据集也泛化得不错，那直接在 Vimeo90K 上训练外插模型应该性能也会很好
+  * 整合一些插帧算法的光流估计设计思路，多尺度多阶段地去把目标帧到输入帧的光流估计出来，然后用光流 warping 和遮挡 mask 去混合输入帧，loss 方面用 deep supervision 做一下
+  * 有的帧可能有高速行驶的车辆，有的帧可能就是静态的场景，用相同的结构一起做显然是浪费，于是设计出一个能自动跳过一些 block 的网络
+  * 经过动态设计，模型推理又能无痛省一半计算量
+* 2022 - [Real-Time Intermediate Flow Estimation for Video Frame Interpolation](https://arxiv.org/pdf/2011.06294.pdf)
+  * 重新审视了以往的光流插帧中的流估计，以及提出一种特权蒸馏的方式帮助模型学习光流
+  * 光流网络抛弃预训练，应该针对任务设计以后 from scratch 训练
+  * 光流模型需要 coarse-to-fine
+  * 以 DAIN 论文为分界线，DAIN 以前有很多 idea 不错的论文，但数据集小效果就不好
+  * 遇事不决就 end-to-end，data-driven，手工设计很可能不如 CNN
 * 2020 - [UPFlow: Upsampling Pyramid for Unsupervised Optical Flow Learning](https://arxiv.org/pdf/2012.00212.pdf)
   * 无监督光流，trick 大礼包
   * bottom-up problem: 光流上采样时，采用 bilinear/bicubic resize 导致模糊。本文引入了 self-guided upsampling module (SGU)
