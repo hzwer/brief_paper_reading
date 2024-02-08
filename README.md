@@ -1,5 +1,5 @@
 # brief_paper_reading
-Organize some of my insights and paper reading records. Total Count：18
+Organize some of my insights and paper reading records. Total Count：19
 ## LLM
 * 2024 - [ToolChain*: Efficient Action Space Navigation in Large Language Models with A* Search](https://arxiv.org/pdf/2310.13227.pdf)
   * LLM 的 A*。A* 每次是根据 g(n) 和 h(n) 来选路线的，不需要等模型执行完全过程；在 a* 算法中， 通常我们也会将距离称为代价f，和起点的距离称为历史代价g，和终点的距离称为未来预期代价h ，f=g+h 。距离最近也就是代价最小，就是（g+h）最小。
@@ -11,7 +11,14 @@ Organize some of my insights and paper reading records. Total Count：18
   * coding 数据集工作，收集了 codeforces 的 7.5k 题目和相关的 5M+ 解答，构造七个任务（检索，翻译等），分析 chatGPT 的表现
   * 数据集的特点是量大、题多、语言多、有部分测例
   * codeforces 比 humaneval 难很多
-  * chatGPT 在 codeforces 1600 分段有 10% 的通过率，而我的常识中 chatGPT 很难做对 1200 分及以上的题。作者发现 chatGPT 对于某个时间点后的题正确率陡降，说明应该是背过题库
+  * chatGPT 在 codeforces 1600 分段有 10% 的通过率，而我的常识中 chatGPT 很难做对 1200 分及以上的题。作者发现 chatGPT 对于某个时间点后的题正确率陡降，说明应该是背过题库 
+* 2023 - [Offline RL for Natural Language Generation with Implicit Language Q Learning](https://openreview.net/pdf?id=aBH_DydEvoH)
+  * 强化学习偏好对齐，研究如何用离线 IQL 来训练 NLP 模型，可以看作 reward model + PPO 的一种离线替代；简单来说，Q 函数就是 reward model 的一种扩展，学出 Q 函数再把它加入 inference 就得到了一种带偏好的生成
+  * 最原始的 Q 函数回归过程中，需要对每个 state 找一个 Q 最大的 action，在离线学习的过程中，我们只采样了有限的 action，得到对应的 Q，可以看作对于随机变量 x 的若干次采样 si
+  * 如果有个网络直接拟合 si，相当于回归平均期望。IQL 套了一个期望回归的方法，使得网络能够回归最大值的期望（具体是通过改 risk function 的角度入手的）。这样就能直接放进原始的离线 DQN 中
+  * 除了把 IQL 的想法自然地套到 NLP 任务上，作者还在训练的时候结合了监督学习
+  * awac loss 就是让 Q 大的那些 action 提高一下出现频率，CQL loss 是一个正则化
+  * [想法] 训练一个 reward model 难度应该不高，ILQL 训练的网络包含了 reward model 的能力后，CQL loss 几乎就是一个变种的监督学习，那么它的下限不应该低于监督学习。上限有多高，能不能达到 instructGPT 中展示的 PPO 的效果有待考察
 * 2021 - [Aligning AI With Shared Human Values](https://arxiv.org/pdf/2008.02275.pdf)
   * 构建了一个伦理相关数据集，commonsense, deontology, justice, utilitarianism, and virtue. 即常识、义务论、正义、功利主义和美德。在这些定义下，可以构建争议较小的道德场景判断
   * 题外话：MMLU 评测集中的道德情景，GPT4 表现相当好
