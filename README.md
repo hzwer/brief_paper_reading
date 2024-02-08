@@ -1,7 +1,7 @@
 # brief_paper_reading
 主要是记录一些这几年读的 paper，持续搬运中，欢迎指正
 
-Organize some of my insights and paper reading records. Total Count：29
+Organize some of my insights and paper reading records. Total Count：30
 ## LLM
 * 2024 - [ToolChain*: Efficient Action Space Navigation in Large Language Models with A* Search](https://arxiv.org/pdf/2310.13227.pdf)
   * LLM 的 A*。A* 每次是根据 g(n) 和 h(n) 来选路线的，不需要等模型执行完全过程；在 a* 算法中， 通常我们也会将距离称为代价f，和起点的距离称为历史代价g，和终点的距离称为未来预期代价h ，f=g+h 。距离最近也就是代价最小，就是（g+h）最小。
@@ -83,6 +83,9 @@ Organize some of my insights and paper reading records. Total Count：29
   * 作者把找出的所有三元组按一个预设规则生成图，对所有 action 进行得分计算，可以看作 action 和图关系的一个关联度计算
   * [想法] 我觉得构造一种 action space 剪枝的方法会很有趣，但是可能按 nn 的思路会做的更隐式一点，比如说鼓励 agent 尝试一些让环境变化比较大的动作
 ## Base Model
+* 2022 - [Online convolutional re-parameterization](http://openaccess.thecvf.com/content/CVPR2022/html/Hu_Online_Convolutional_Re-Parameterization_CVPR_2022_paper.html)
+  * 这篇一个核心的证明是说，带有 scaling 的多分支卷积不会退化成单个卷积
+  * 这样就不强求重参数化要用 BN 了
 * 2021 - [Diverse Branch Block: Building a Convolution as an Inception-like Unit](https://openaccess.thecvf.com/content/CVPR2021/papers/Ding_Diverse_Branch_Block_Building_a_Convolution_as_an_Inception-Like_Unit_CVPR_2021_paper.pdf)
   * RepVGG 后又一篇白嫖涨点的 paper，训练的时候 inception，推理的时候变成 conv 或 resnet
   * 任意加一个带 1x1 的分支，ImageNet 基本上就能涨 0.5+ 的点
