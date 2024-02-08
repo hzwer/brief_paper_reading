@@ -19,6 +19,10 @@ Organize some of my insights and paper reading records. Total Count：20
   * 除了把 IQL 的想法自然地套到 NLP 任务上，作者还在训练的时候结合了监督学习
   * awac loss 就是让 Q 大的那些 action 提高一下出现频率，CQL loss 是一个正则化
   * [想法] 训练一个 reward model 难度应该不高，ILQL 训练的网络包含了 reward model 的能力后，CQL loss 几乎就是一个变种的监督学习，那么它的下限不应该低于监督学习。上限有多高，能不能达到 instructGPT 中展示的 PPO 的效果有待考察
+* 2023 - [A Comparative Study between Full-Parameter and LoRA-based Fine-Tuning on Chinese Instruction Data for Instruction Following Large Language Model ](https://github.com/LianjiaTech/BELLE/blob/main/docs/A%20Comparative%20Study%20between%20Full-Parameter%20and%20LoRA-based.pdf)
+  * belle 团队探讨了全参数 sft 和 lora sft 的效果差异，讨论了训练开销和模型性能之间的取舍
+  * 比较显著的差异是学习率，lora sft 可以使用 40x 的学习率
+  * [想法] lora 上做研究可能会很快达到瓶颈，最后大家被迫选择全参数
 * 2021 - [Aligning AI With Shared Human Values](https://arxiv.org/pdf/2008.02275.pdf)
   * 构建了一个伦理相关数据集，commonsense, deontology, justice, utilitarianism, and virtue. 即常识、义务论、正义、功利主义和美德。在这些定义下，可以构建争议较小的道德场景判断
   * 题外话：MMLU 评测集中的道德情景，GPT4 表现相当好
