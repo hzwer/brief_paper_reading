@@ -1,5 +1,5 @@
 # brief_paper_reading
-Organize some of my insights and paper reading records. Total Count：19
+Organize some of my insights and paper reading records. Total Count：20
 ## LLM
 * 2024 - [ToolChain*: Efficient Action Space Navigation in Large Language Models with A* Search](https://arxiv.org/pdf/2310.13227.pdf)
   * LLM 的 A*。A* 每次是根据 g(n) 和 h(n) 来选路线的，不需要等模型执行完全过程；在 a* 算法中， 通常我们也会将距离称为代价f，和起点的距离称为历史代价g，和终点的距离称为未来预期代价h ，f=g+h 。距离最近也就是代价最小，就是（g+h）最小。
@@ -101,4 +101,12 @@ ambiguity to the occluded areas and breaks the symmetricity of the feature match
     * BN 可以帮助超分模型训练，但因为训练推理的不对称性，会出现一些 artifacts
     * 把重参数化放到 SR 里，很多类似 paper
     * 在超分上，BN 的统计量有点问题，观察训练曲线，发现 validation 时常爆炸，train curve 一直很正常
-    * 在训练最后阶段用 population 统计量代替 mini-batch 统计量（我理解就是把 BN 切换成 eval 模式再微调），涨了一些点
+    * 在训练最后阶段用 population 统计量代替 mini-batch 统计量（我理解就是把 BN 切换成 eval 模式再微调），涨了一些点   
+## Reinforcement Learning
+* 2023 - [Learning About Progress From Experts](https://openreview.net/pdf?id=sKc6fgce1zs)
+  * 强化学习，nethack 这类流程步骤非常长的游戏，直接从显式奖励中并不好学习，本文提出专家的示例隐含着对游戏进程推进的指示信息，可以先从专家的游戏视频中学出一个指示游戏进程的 progress model，来提供 reward
+  * 从专家数据集里抽出同 episode 的两帧，让 progress model 估计这两帧之间的有向时间距离，然后把这一项加到原始 reward 里
+  * 一个细节是需要把 state 里面直接表示时间的部分手动移除掉
+  * process model 可以自动把揭示地图迷雾和游戏进程的推进联系起来，也能把注意到各种属性的意义
+  * 训练 progress model 时，随机选取专家轨迹中的两帧，让 model 估计这两帧的有向时间差；在训练 agent 的时候，选择让 progress model 衡量当前 t 时刻局面和 t-8 时刻局面的进程差，作为一种奖励
+  * 用 learning 的方式替代对于各种属性特征的手工奖励建模，在 nethack 中非常合理
