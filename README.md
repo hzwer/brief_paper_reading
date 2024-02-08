@@ -1,6 +1,6 @@
 # brief_paper_reading
-Organize some of my insights and paper reading records. Total Count：20
-## LLM
+Organize some of my insights and paper reading records. Total Count：22
+## LLM - 7
 * 2024 - [ToolChain*: Efficient Action Space Navigation in Large Language Models with A* Search](https://arxiv.org/pdf/2310.13227.pdf)
   * LLM 的 A*。A* 每次是根据 g(n) 和 h(n) 来选路线的，不需要等模型执行完全过程；在 a* 算法中， 通常我们也会将距离称为代价f，和起点的距离称为历史代价g，和终点的距离称为未来预期代价h ，f=g+h 。距离最近也就是代价最小，就是（g+h）最小。
   * 整体框架是在维护一个搜索树，每次选一个最有前途的叶节点开始扩展，所以这里要把 A* 理解成一种可扩展的广度搜索算法（和算法竞赛用的 A* 不一定一样）
@@ -19,10 +19,28 @@ Organize some of my insights and paper reading records. Total Count：20
   * 除了把 IQL 的想法自然地套到 NLP 任务上，作者还在训练的时候结合了监督学习
   * awac loss 就是让 Q 大的那些 action 提高一下出现频率，CQL loss 是一个正则化
   * [想法] 训练一个 reward model 难度应该不高，ILQL 训练的网络包含了 reward model 的能力后，CQL loss 几乎就是一个变种的监督学习，那么它的下限不应该低于监督学习。上限有多高，能不能达到 instructGPT 中展示的 PPO 的效果有待考察
+* 2023 - [MarioGPT: Open-Ended Text2Level Generation through Large Language Models](https://arxiv.org/pdf/2302.05981.pdf)
+  * 机器之心： 用 GPT 生成《超级马里奥》游戏关卡，近 9 成关卡可玩
+  * MarioGPT 是一个经过微调的 GPT-2 模型（更具体地，是基于一个 86M 大小的 DistilGPT2），经过训练可以生成《超级马里奥》中的游戏关卡
+  * 一个关卡可以看成字符画，GPT 每次处理一列
+  * MarioGPT 已经可以直接生成关卡，但我们不仅要生成具有不同物理特征的关卡，而且要生成让玩家能觉得有趣的关卡
+  * 维护一个关卡集合（起始 30 个），生成新的关卡后拿 A* 算法评估通关轨迹，看看相比集合中的有没有新颖度，生成的方法也是渐进地变异杂交
+  * 为了测试可玩性，研究者在 250 个关卡中部署了 Robin Baumgarten 的 A* agent。研究者发现，所有 MarioGPT 生成的关卡中，88.33% 可以由 agent 完成
 * 2023 - [A Comparative Study between Full-Parameter and LoRA-based Fine-Tuning on Chinese Instruction Data for Instruction Following Large Language Model ](https://github.com/LianjiaTech/BELLE/blob/main/docs/A%20Comparative%20Study%20between%20Full-Parameter%20and%20LoRA-based.pdf)
   * belle 团队探讨了全参数 sft 和 lora sft 的效果差异，讨论了训练开销和模型性能之间的取舍
   * 比较显著的差异是学习率，lora sft 可以使用 40x 的学习率
-  * [想法] lora 上做研究可能会很快达到瓶颈，最后大家被迫选择全参数
+  * [想法] lora 上做研究可能会很快达到瓶颈，最后大家被迫选择全参数 
+* 2022 - [OPT: Open Pre-trained Transformer Language Models](https://arxiv.org/abs/2205.01068?source=techstories.org)
+  * 汇集了很多大家已知的 Transformer 训练问题，而且由于时间短，基建任务重，模型大，踩了很多坑
+  * 要在三个多月用千卡 A100 训练一个 175B 的模型，其中完整训练需要 33 天；团队有五个人，还加上一些云服务商支持
+  * 硬件故障：35次手动重启，100卡出故障被移除
+  * Loss 时常训飞，每当训飞的时候，降低学习率，加载上一个 checkpoint
+  * learning rate 长成人肉 PID 状
+  * 权重初始化和 Megatron-LM 开源的代码中保持一致，使用了均值 0 标准差 0.006 的分布来初始化，输出层的标准差用 1.0/开根号(2L) 来做缩放，L是总共的层数
+  * 使用 AdamW 作为优化器，(β1,β2) = (0.9,0.95)，weight decay 是 0.1（默认是 0.01，据说在大模型训练时偏小）
+  * 作者发现 gradient clipping 一般在 0.2 左右，所以直接用 clip 0.3 来稳定训练
+  * 尝试 SGD，努力以后放弃；用和 adam 相同学习率会很快就不下降了，用更大的学习率也没有明显收益
+  * [来自知乎] 自BERT和GPT之后，NLP领域的技术就在原地打转了，BERT在2018年9月出来，大家经过四年的努力，发现Scale up 是目前唯一正确的解决方案  
 * 2021 - [Aligning AI With Shared Human Values](https://arxiv.org/pdf/2008.02275.pdf)
   * 构建了一个伦理相关数据集，commonsense, deontology, justice, utilitarianism, and virtue. 即常识、义务论、正义、功利主义和美德。在这些定义下，可以构建争议较小的道德场景判断
   * 题外话：MMLU 评测集中的道德情景，GPT4 表现相当好
@@ -31,7 +49,8 @@ Organize some of my insights and paper reading records. Total Count：20
   * 正义包含两个部分，一个是 Impartiality（公正），一个是 Desert（应得的）：前者是说一个人所受到的对待不应该由于偏见和歧视被改变，后者是说一个人得到的对待和他的行为是相对对等的
   * [想法] 我在为每个子集编写测试 prompt 的过程中，用 gpt4 来测试可以得到很好的反馈，帮助把 prompt 写的更清晰和消歧义
   * [想法] 大模型自然表现出比小模型更高的道德水平，也有一些文献表明大模型具有自主降低输出毒性的能力
-## Base Model
+ 
+## Base Model - 5
 * 2021 - [Diverse Branch Block: Building a Convolution as an Inception-like Unit](https://openaccess.thecvf.com/content/CVPR2021/papers/Ding_Diverse_Branch_Block_Building_a_Convolution_as_an_Inception-Like_Unit_CVPR_2021_paper.pdf)
   * RepVGG 后又一篇白嫖涨点的 paper，训练的时候 inception，推理的时候变成 conv 或 resnet
   * 任意加一个带 1x1 的分支，ImageNet 基本上就能涨 0.5+ 的点
@@ -54,7 +73,7 @@ Organize some of my insights and paper reading records. Total Count：20
   * 这篇是 ResNeXt。AlexNet 曾经把网络分成两组，一组倾向于学习黑白的信息，而另一组倾向于学习到彩色的信息
   * 关于分组，论文说：Multi-head attention allows the model to jointly attend to information from different representation subspaces.
   * 对比 inception 和 ResNeXt，可以看到 ResNeXt 的分支是同构的
-## Video
+## Video - 7
 * 2020 - [UPFlow: Upsampling Pyramid for Unsupervised Optical Flow Learning](https://arxiv.org/pdf/2012.00212.pdf)
   * 无监督光流，trick 大礼包
   * bottom-up problem: 光流上采样时，采用 bilinear/bicubic resize 导致模糊。本文引入了 self-guided upsampling module (SGU)
@@ -96,7 +115,7 @@ ambiguity to the occluded areas and breaks the symmetricity of the feature match
   * FlyingThings3D，22k 张图，考虑光线，3d移动，各种物体
   * 直接在FlyingThings3D训不好，先在FlyingChairs上训，再在FlyingThings3D上finetune比较好
   * 尝试用得到的光流来辅助 motion segmentation 和 action recognition 的模型
-## Low-Level Vision 
+## Low-Level Vision - 2
   * 2022 - [Simple Baselines for Image Restoration ](https://arxiv.org/abs/2204.04676)
     * 提出一个图像修复的简单基线模型，核心是带 layernorm 的深层模型和本文提出的非线性无激活组件（用乘法代替激活函数）
     * NAFNet 的核心是 layernorm 和 simplegate (Gate(X, f, g, σ) = f(X) ⊙ σ(g(X)))
@@ -106,11 +125,11 @@ ambiguity to the occluded areas and breaks the symmetricity of the feature match
     * 把重参数化放到 SR 里，很多类似 paper
     * 在超分上，BN 的统计量有点问题，观察训练曲线，发现 validation 时常爆炸，train curve 一直很正常
     * 在训练最后阶段用 population 统计量代替 mini-batch 统计量（我理解就是把 BN 切换成 eval 模式再微调），涨了一些点   
-## Reinforcement Learning
+## Reinforcement Learning - 1
 * 2023 - [Learning About Progress From Experts](https://openreview.net/pdf?id=sKc6fgce1zs)
   * 强化学习，nethack 这类流程步骤非常长的游戏，直接从显式奖励中并不好学习，本文提出专家的示例隐含着对游戏进程推进的指示信息，可以先从专家的游戏视频中学出一个指示游戏进程的 progress model，来提供 reward
   * 从专家数据集里抽出同 episode 的两帧，让 progress model 估计这两帧之间的有向时间距离，然后把这一项加到原始 reward 里
   * 一个细节是需要把 state 里面直接表示时间的部分手动移除掉
   * process model 可以自动把揭示地图迷雾和游戏进程的推进联系起来，也能把注意到各种属性的意义
   * 训练 progress model 时，随机选取专家轨迹中的两帧，让 model 估计这两帧的有向时间差；在训练 agent 的时候，选择让 progress model 衡量当前 t 时刻局面和 t-8 时刻局面的进程差，作为一种奖励
-  * 用 learning 的方式替代对于各种属性特征的手工奖励建模，在 nethack 中非常合理
+  * 用 learning 的方式替代对于各种属性特征的手工奖励建模，在 nethack 中非常合理 
