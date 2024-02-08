@@ -1,4 +1,5 @@
 # briefly_paper_reading
+Total Count：13
 ## LLM
 * 2024 - [xCodeEval: A Large Scale Multilingual Multitask Benchmark for Code Understanding, Generation, Translation and Retrieval](https://arxiv.org/pdf/2303.03004.pdf)
   * coding 数据集工作，收集了 codeforces 的 7.5k 题目和相关的 5M+ 解答，构造七个任务（检索，翻译等），分析 chatGPT 的表现
@@ -14,12 +15,20 @@
   * [想法] 我在为每个子集编写测试 prompt 的过程中，用 gpt4 来测试可以得到很好的反馈，帮助把 prompt 写的更清晰和消歧义
   * [想法] 大模型自然表现出比小模型更高的道德水平，也有一些文献表明大模型具有自主降低输出毒性的能力
 ## Base Model
-* [Designing network design spaces](https://arxiv.org/pdf/2003.13678.pdf)
+* 2020 - [Designing network design spaces](https://arxiv.org/pdf/2003.13678.pdf)
   * Ilija 的 RegNet，一种新的模型设计范式，即设计一个好的搜索空间，在里面随机采出的一簇模型平均性能都很好
   * 不断缩小设计空间，使得该空间内模型的平均性能提升，测试方法是在一个空间采 500 个模型，每个模型训 10 epoch
   * 设计目标：简化设计空间结构；提高设计空间的可解释性；改善或维持设计空间的质量；保持设计空间的模型多样性
   * 模型速度跟 (根号 flops) 或者 activation 是线性关系，flops 很容易骗人
   * [想法] 别的很多新文章，本质上想涨点，四个操作，1.加se；2.relu改成prelu或者swish等激活函数；3.加上多尺度信息；4.各种特殊数据扩增，以及更多的epoch，所以我喜欢这篇
+* 2019 - [ACNet: Strengthening the Kernel Skeletons for Powerful CNN via Asymmetric Convolution Blocks](https://arxiv.org/pdf/1908.03930.pdf)
+  * 重参数化 Rep 宇宙起点（当年大家未发觉）
+  * 提出了 不对称的训练 - 推理 方法，实现了推理时免费涨点
+  * 作者认为 ACNet 加强了 kernel 骨架的特征提取能力（我觉得是一个简单包装）
+* 2016 - [Aggregated Residual Transformations for Deep Neural Networks](https://arxiv.org/abs/1611.05431)
+  * 这篇是 ResNeXt。AlexNet 曾经把网络分成两组，一组倾向于学习黑白的信息，而另一组倾向于学习到彩色的信息
+  * 关于分组，论文说：Multi-head attention allows the model to jointly attend to information from different representation subspaces.
+  * 对比 inception 和 ResNeXt，可以看到 ResNeXt 的分支是同构的
 ## Video
 * 2020 - [UPFlow: Upsampling Pyramid for Unsupervised Optical Flow Learning](https://arxiv.org/pdf/2012.00212.pdf)
   * 无监督光流，trick 大礼包
@@ -62,3 +71,8 @@ ambiguity to the occluded areas and breaks the symmetricity of the feature match
   * FlyingThings3D，22k 张图，考虑光线，3d移动，各种物体
   * 直接在FlyingThings3D训不好，先在FlyingChairs上训，再在FlyingThings3D上finetune比较好
   * 尝试用得到的光流来辅助 motion segmentation 和 action recognition 的模型
+## Low-Level Vision 
+  * 2022 - [Simple Baselines for Image Restoration ](https://arxiv.org/abs/2204.04676)
+    * 提出一个图像修复的简单基线模型，核心是带 layernorm 的深层模型和本文提出的非线性无激活组件（用乘法代替激活函数）
+    * NAFNet 的核心是 layernorm 和 simplegate (Gate(X, f, g, σ) = f(X) ⊙ σ(g(X)))
+    * low-level vision 做到 layernorm + 深这两点，性能就可以很好
