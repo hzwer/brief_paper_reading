@@ -39,7 +39,13 @@ ambiguity to the occluded areas and breaks the symmetricity of the feature match
   * 通过大量实验分析无监督光流训练中各种方法和技巧的收益，主要包括遮挡处理，图像 loss 设计以及结果的平滑正则
   * 提出了四个改进，包括归一化 costvolumn，遮挡估计时中断梯度，在resize前的光流上加平滑正则，以及自监督训练
   * smoothness，本文推荐使用 edge-aware，鼓励光流和图片有比较一致的边缘
-  * 自监督，先对一个 pair 预测光流（teacher），再在图片上加增广预测光流（student），在两个光流之间加自监督 loss，loss 只向 student flow 上传播   
+  * 自监督，先对一个 pair 预测光流（teacher），再在图片上加增广预测光流（student），在两个光流之间加自监督 loss，loss 只向 student flow 上传播
+* 2019 - [Depth-Aware Video Frame Interpolation ](https://discourse.brainpp.cn/t/topic/18874/2)
+  * 在用光流图插帧的时候，考虑图片的深度，即显式地建模遮挡
+  * 把 hierarchical features 整合进 Frame Synthesis 网络来提升性能，同时期很多人这么干
+  * 训练集是 vimeo90k，训练的时候只预测 t = 0.5，测试时在任意 t 上测试，40 epoch，单卡训了 5 天，参数量是 24M，runtime 为 0.13s（640 × 480)
+  * 最终效果很好，但是计算量大，还需要 pretrain 的光流和深度估计
+  * [想法] 主表中 runtime 没有在相同硬件报告，RIFE 被坑了一把
 * 2016 - [FlowNet 2.0: Evolution of Optical Flow Estimation with Deep Networks](https://arxiv.org/pdf/1612.01925.pdf)
   * 使 CNN 光流方法达到了传统光流法的效果
   * 喂不同难度数据的顺序影响模型训练效果
