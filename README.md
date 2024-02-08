@@ -1,6 +1,12 @@
 # brief_paper_reading
-Organize some of my insights and paper reading records. Total Count：16
+Organize some of my insights and paper reading records. Total Count：18
 ## LLM
+* 2024 - [ToolChain*: Efficient Action Space Navigation in Large Language Models with A* Search](https://arxiv.org/pdf/2310.13227.pdf)
+  * LLM 的 A*。A* 每次是根据 g(n) 和 h(n) 来选路线的，不需要等模型执行完全过程；在 a* 算法中， 通常我们也会将距离称为代价f，和起点的距离称为历史代价g，和终点的距离称为未来预期代价h ，f=g+h 。距离最近也就是代价最小，就是（g+h）最小。
+  * 整体框架是在维护一个搜索树，每次选一个最有前途的叶节点开始扩展，所以这里要把 A* 理解成一种可扩展的广度搜索算法（和算法竞赛用的 A* 不一定一样）
+  * g(n) 包括 g1 和 g2，g 的每一个小项相当于选择一个步骤的开销，g1 项是在历史的成功案例中，找一个 lcs_score 最大的，g2 项目是选每个 step 的时候，看一下候选的 k 个 step，有多少和它相似（感觉是 ensemble 变种）
+  * h(n) 也是包括 h1 和 h2，前者是把下一个 step 去 memory 中找对照，后者是让 LLM 想象未来还需要具体的多少个步骤
+  * 总体计算开销目测是 10x 原始模型，比 mcts 快几倍
 * 2024 - [xCodeEval: A Large Scale Multilingual Multitask Benchmark for Code Understanding, Generation, Translation and Retrieval](https://arxiv.org/pdf/2303.03004.pdf)
   * coding 数据集工作，收集了 codeforces 的 7.5k 题目和相关的 5M+ 解答，构造七个任务（检索，翻译等），分析 chatGPT 的表现
   * 数据集的特点是量大、题多、语言多、有部分测例
