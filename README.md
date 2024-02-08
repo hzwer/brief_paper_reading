@@ -1,6 +1,8 @@
 # brief_paper_reading
 主要是记录一些这几年读的 paper，持续搬运中，欢迎指正
 
+主要领域 LLM，Video, Low-level Vision, Reinfercement Learning
+
 Organize some of my insights and paper reading records. Total Count：38
 ## LLM
 * 2024 - [ToolChain*: Efficient Action Space Navigation in Large Language Models with A* Search](https://arxiv.org/pdf/2310.13227.pdf)
