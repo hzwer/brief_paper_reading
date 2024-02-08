@@ -1,7 +1,7 @@
 # brief_paper_reading
 主要是记录一些这几年读的 paper，持续搬运中，欢迎指正
 
-Organize some of my insights and paper reading records. Total Count：30
+Organize some of my insights and paper reading records. Total Count：31
 ## LLM
 * 2024 - [ToolChain*: Efficient Action Space Navigation in Large Language Models with A* Search](https://arxiv.org/pdf/2310.13227.pdf)
   * LLM 的 A*。A* 每次是根据 g(n) 和 h(n) 来选路线的，不需要等模型执行完全过程；在 a* 算法中， 通常我们也会将距离称为代价f，和起点的距离称为历史代价g，和终点的距离称为未来预期代价h ，f=g+h 。距离最近也就是代价最小，就是（g+h）最小。
@@ -173,7 +173,19 @@ ambiguity to the occluded areas and breaks the symmetricity of the feature match
   * 在各种需要回归数值的地方放上符号对数预测，使得各种定义的尺度变化对模型影响变小
   * 还有一个改进是作者认为 critic 直接回归值不够好，改成回归分布
   * 使模型完全可以离线训练，replayed step 倍数越大，训的越好
-  * 大 policy 模型不仅上限高，而且数据效率也高
+  * 大 policy 模型不仅上限高，而且数据效率也高 
+* 2022 - [Video PreTraining (VPT): Learning to Act by Watching Unlabeled Online Videos]()
+  * 这篇论文研究了如何用大量的 minecraft 未标注游戏视频来帮助强化学习，实现一些非常难的任务（比如挖钻石）
+  * 这篇 paper 有 9 个作者，说是至少都全职投入了半年，完整训练一次需要 “9 days on 720 V100 GPUs”，附录二十多页
+  * 收集数据：随便从网上找 270k hours 数据，然后过滤一下，去掉那些水印，主播露脸，创造模型，非 pc 平台的数据，得到 70k hours 的干净数据；训练一个逆动力学模型 IDM：找一些人来玩 2k hours，记录键盘鼠标操作，然后用这些标注蒸馏出一个从 video 反推键鼠操作的模型；用 IDM 给所有视频打标签，开始模仿学习；经过模型学习预训练后，模型已经表现出相当的智能（会做很多基本的事情，比如砍树、游泳、打猎、跳柱）；然后作者研究这样的预训练对于下游任务的作用
+  * 注意这整篇 paper 定义的动作空间完全是键鼠和人机界面，和以往简化动作空间的做法不同，极大提高了任务难度
+  * 直觉上学 IDM 确实是个简单一些的任务，完全的监督学习
+  * IDM 是给前后帧估计键鼠操作，BC 是给前帧预测未来所以更困难；之后的消融实验表明，虽然听起来简单，但 IDM 至少也需要 100 hours 的数据来训练
+  * 文中还用到了 “earlygame_keyword” 和 “contractor_house” 子数据集，前者是在收集数据的时候选用了特定的关键字，后者是找人来玩的时候，让他们十分钟造一个简单房子，在这俩数据集上 finetune，会使得模型产生更多的特定行为
+  * KL loss 可以约束训练后的模型和最初的预训练模型的 gap，这样使得模型避免 “灾难性遗忘”（比如模型可能看过怎么使用一个熔炉的界面，但是因为在 finetune RL 阶段要很后期才会出现熔炉，就忘了怎么用）
+  * 这个模型制造工具的水平相当高，10分钟有2.5%都造出了钻石镐，感觉超越大部分玩家
+  * 减少数据量会使得一些行为无法学习
+  * [想法] 结果令人震撼，各种投入都拉满了，在 RL 领域少见的暴力，力大砖飞（用很朴素的方法实现了很强的结果）
 * 2021 - [What Matters for On-Policy Deep Actor-Critic Methods? A Large-Scale Study](https://openreview.net/pdf?id=nIAxjsniDzg)
   * 本文是 PPO 时代的又一实践指导工作，给出的一些建议相当有用，本文宣称至少考虑了实现中的 50 种选择和包含 250’000 组实验验证
   * 附录有 50 页可以用来当调参手册
