@@ -1,5 +1,5 @@
 # briefly_paper_reading
-Total Count：13
+Total Count：16
 ## LLM
 * 2024 - [xCodeEval: A Large Scale Multilingual Multitask Benchmark for Code Understanding, Generation, Translation and Retrieval](https://arxiv.org/pdf/2303.03004.pdf)
   * coding 数据集工作，收集了 codeforces 的 7.5k 题目和相关的 5M+ 解答，构造七个任务（检索，翻译等），分析 chatGPT 的表现
@@ -15,6 +15,14 @@ Total Count：13
   * [想法] 我在为每个子集编写测试 prompt 的过程中，用 gpt4 来测试可以得到很好的反馈，帮助把 prompt 写的更清晰和消歧义
   * [想法] 大模型自然表现出比小模型更高的道德水平，也有一些文献表明大模型具有自主降低输出毒性的能力
 ## Base Model
+* 2021 - [Diverse Branch Block: Building a Convolution as an Inception-like Unit](https://openaccess.thecvf.com/content/CVPR2021/papers/Ding_Diverse_Branch_Block_Building_a_Convolution_as_an_Inception-Like_Unit_CVPR_2021_paper.pdf)
+  * RepVGG 后又一篇白嫖涨点的 paper，训练的时候 inception，推理的时候变成 conv 或 resnet
+  * 任意加一个带 1x1 的分支，ImageNet 基本上就能涨 0.5+ 的点
+  * 按 DBB 的说法，重参数化的关键在于不同分支都要各自带一个 BN
+* 2021 - [RepVGG: Making VGG-Style ConvNets Great Again](https://openaccess.thecvf.com/content/CVPR2021/html/Ding_RepVGG_Making_VGG-Style_ConvNets_Great_Again_CVPR_2021_paper.html)
+  * 把 ACNet 的故事上升了一个高度，提出了结构重参数化的概念：“we propose to decouple the training-time multi-branch and inference-time plain architecture via structural re-parameterization”
+  * 技术上一言蔽之，把 resblock 通过重参数化改造后变回 3x3 conv，相当把 shortcut 放到了重参数化里，这样可以让 VGG-like 的结构达到 ResNet 的性能
+  * 关于 ResNet 好的一个注解："An explanation is that a multi-branch topology, e.g., ResNet, makes the model an implicit ensemble of numerous shallower models, so that training a multi-branch model avoids the gradient vanishing problem"
 * 2020 - [Designing network design spaces](https://arxiv.org/pdf/2003.13678.pdf)
   * Ilija 的 RegNet，一种新的模型设计范式，即设计一个好的搜索空间，在里面随机采出的一簇模型平均性能都很好
   * 不断缩小设计空间，使得该空间内模型的平均性能提升，测试方法是在一个空间采 500 个模型，每个模型训 10 epoch
@@ -76,3 +84,8 @@ ambiguity to the occluded areas and breaks the symmetricity of the feature match
     * 提出一个图像修复的简单基线模型，核心是带 layernorm 的深层模型和本文提出的非线性无激活组件（用乘法代替激活函数）
     * NAFNet 的核心是 layernorm 和 simplegate (Gate(X, f, g, σ) = f(X) ⊙ σ(g(X)))
     * low-level vision 做到 layernorm + 深这两点，性能就可以很好
+  * 2022 - [RepSR: Training Efficient VGG-style Super-Resolution Networks with Structural Re-Parameterization and Batch Normalization](https://dl.acm.org/doi/abs/10.1145/3503161.3547915)
+    * BN 可以帮助超分模型训练，但因为训练推理的不对称性，会出现一些 artifacts
+    * 把重参数化放到 SR 里，很多类似 paper
+    * 在超分上，BN 的统计量有点问题，观察训练曲线，发现 validation 时常爆炸，train curve 一直很正常
+    * 在训练最后阶段用 population 统计量代替 mini-batch 统计量（我理解就是把 BN 切换成 eval 模式再微调），涨了一些点
