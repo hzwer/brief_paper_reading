@@ -1,6 +1,6 @@
 # brief_paper_reading
-Organize some of my insights and paper reading records. Total Count：22
-## LLM - 7
+Organize some of my insights and paper reading records. Total Count：25
+## LLM
 * 2024 - [ToolChain*: Efficient Action Space Navigation in Large Language Models with A* Search](https://arxiv.org/pdf/2310.13227.pdf)
   * LLM 的 A*。A* 每次是根据 g(n) 和 h(n) 来选路线的，不需要等模型执行完全过程；在 a* 算法中， 通常我们也会将距离称为代价f，和起点的距离称为历史代价g，和终点的距离称为未来预期代价h ，f=g+h 。距离最近也就是代价最小，就是（g+h）最小。
   * 整体框架是在维护一个搜索树，每次选一个最有前途的叶节点开始扩展，所以这里要把 A* 理解成一种可扩展的广度搜索算法（和算法竞赛用的 A* 不一定一样）
@@ -30,6 +30,11 @@ Organize some of my insights and paper reading records. Total Count：22
   * belle 团队探讨了全参数 sft 和 lora sft 的效果差异，讨论了训练开销和模型性能之间的取舍
   * 比较显著的差异是学习率，lora sft 可以使用 40x 的学习率
   * [想法] lora 上做研究可能会很快达到瓶颈，最后大家被迫选择全参数 
+* 2022 - [SCIENCEWORLD: Is your Agent Smarter than a 5th Grader?](https://arxiv.org/pdf/2203.07540.pdf)
+  * LLM 在检索查表方面很强，但它们并不能在一些非常简单的实验场景验证科学概念，比如构建实验判断某个物体是否导电
+  * 本文提出了一组 30 个科学实验相关的 RL tasks，涉及简单的理科实验，LLM 目前尚不能给解决这些任务带来增益
+  * 作者分析说由于动作空间有百万种组合，大模型受困于无法找到合法的 action
+  * [想法] 将 LLM grounding 到具体 RL 任务上时，目前还没有通用的训练范式
 * 2022 - [OPT: Open Pre-trained Transformer Language Models](https://arxiv.org/abs/2205.01068?source=techstories.org)
   * 汇集了很多大家已知的 Transformer 训练问题，而且由于时间短，基建任务重，模型大，踩了很多坑
   * 要在三个多月用千卡 A100 训练一个 175B 的模型，其中完整训练需要 33 天；团队有五个人，还加上一些云服务商支持
@@ -49,8 +54,17 @@ Organize some of my insights and paper reading records. Total Count：22
   * 正义包含两个部分，一个是 Impartiality（公正），一个是 Desert（应得的）：前者是说一个人所受到的对待不应该由于偏见和歧视被改变，后者是说一个人得到的对待和他的行为是相对对等的
   * [想法] 我在为每个子集编写测试 prompt 的过程中，用 gpt4 来测试可以得到很好的反馈，帮助把 prompt 写的更清晰和消歧义
   * [想法] 大模型自然表现出比小模型更高的道德水平，也有一些文献表明大模型具有自主降低输出毒性的能力
- 
-## Base Model - 5
+ * 2018 - [BabyAI: A Platform to Study the Sample Efficiency of Grounded Language Learning](https://arxiv.org/pdf/1810.08272.pdf)
+  * 一个研究 Sample Efficiency of Grounded Language Learning 的平台
+  * 有从易到难的 19 个任务，并且包括程序写的解法用来克隆学习；模拟很快，每秒也是千帧级，而且可回溯；Goal 用语言描述，虽然不是纯自然语言，但也是一个非常大的组合空间，称为 baby language
+  * 在 1M 交互的训练下，模型能有不错的结果，一些预训练对更高级任务是有帮助的
+  * 先用一个很小的数据集训 agent，训完以后加入一部分它 fail 的带标注数据，如此反复迭代；像是一种 hard example mining
+ * 2018 - [Playing text-adventure games with graph-based deep reinforcement learning](https://arxiv.org/abs/1812.01628)
+  * 在强化学习的探索过程中学习 knowledge graph，可以用来对动作空间进行剪枝
+  * OpenIE 会自动构建出 ⟨subject, relation, object⟩ 的三元组关系，感觉是对自然语言的一种显式的逻辑化解读
+  * 作者把找出的所有三元组按一个预设规则生成图，对所有 action 进行得分计算，可以看作 action 和图关系的一个关联度计算
+  * [想法] 我觉得构造一种 action space 剪枝的方法会很有趣，但是可能按 nn 的思路会做的更隐式一点，比如说鼓励 agent 尝试一些让环境变化比较大的动作
+## Base Model
 * 2021 - [Diverse Branch Block: Building a Convolution as an Inception-like Unit](https://openaccess.thecvf.com/content/CVPR2021/papers/Ding_Diverse_Branch_Block_Building_a_Convolution_as_an_Inception-Like_Unit_CVPR_2021_paper.pdf)
   * RepVGG 后又一篇白嫖涨点的 paper，训练的时候 inception，推理的时候变成 conv 或 resnet
   * 任意加一个带 1x1 的分支，ImageNet 基本上就能涨 0.5+ 的点
@@ -73,7 +87,7 @@ Organize some of my insights and paper reading records. Total Count：22
   * 这篇是 ResNeXt。AlexNet 曾经把网络分成两组，一组倾向于学习黑白的信息，而另一组倾向于学习到彩色的信息
   * 关于分组，论文说：Multi-head attention allows the model to jointly attend to information from different representation subspaces.
   * 对比 inception 和 ResNeXt，可以看到 ResNeXt 的分支是同构的
-## Video - 7
+## Video
 * 2020 - [UPFlow: Upsampling Pyramid for Unsupervised Optical Flow Learning](https://arxiv.org/pdf/2012.00212.pdf)
   * 无监督光流，trick 大礼包
   * bottom-up problem: 光流上采样时，采用 bilinear/bicubic resize 导致模糊。本文引入了 self-guided upsampling module (SGU)
@@ -115,7 +129,7 @@ ambiguity to the occluded areas and breaks the symmetricity of the feature match
   * FlyingThings3D，22k 张图，考虑光线，3d移动，各种物体
   * 直接在FlyingThings3D训不好，先在FlyingChairs上训，再在FlyingThings3D上finetune比较好
   * 尝试用得到的光流来辅助 motion segmentation 和 action recognition 的模型
-## Low-Level Vision - 2
+## Low-Level Vision
   * 2022 - [Simple Baselines for Image Restoration ](https://arxiv.org/abs/2204.04676)
     * 提出一个图像修复的简单基线模型，核心是带 layernorm 的深层模型和本文提出的非线性无激活组件（用乘法代替激活函数）
     * NAFNet 的核心是 layernorm 和 simplegate (Gate(X, f, g, σ) = f(X) ⊙ σ(g(X)))
@@ -125,7 +139,7 @@ ambiguity to the occluded areas and breaks the symmetricity of the feature match
     * 把重参数化放到 SR 里，很多类似 paper
     * 在超分上，BN 的统计量有点问题，观察训练曲线，发现 validation 时常爆炸，train curve 一直很正常
     * 在训练最后阶段用 population 统计量代替 mini-batch 统计量（我理解就是把 BN 切换成 eval 模式再微调），涨了一些点   
-## Reinforcement Learning - 1
+## Reinforcement Learning
 * 2023 - [Learning About Progress From Experts](https://openreview.net/pdf?id=sKc6fgce1zs)
   * 强化学习，nethack 这类流程步骤非常长的游戏，直接从显式奖励中并不好学习，本文提出专家的示例隐含着对游戏进程推进的指示信息，可以先从专家的游戏视频中学出一个指示游戏进程的 progress model，来提供 reward
   * 从专家数据集里抽出同 episode 的两帧，让 progress model 估计这两帧之间的有向时间距离，然后把这一项加到原始 reward 里
