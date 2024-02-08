@@ -1,5 +1,5 @@
 # brief_paper_reading
-Organize some of my insights and paper reading records. Total Count：25
+Organize some of my insights and paper reading records. Total Count：27
 ## LLM
 * 2024 - [ToolChain*: Efficient Action Space Navigation in Large Language Models with A* Search](https://arxiv.org/pdf/2310.13227.pdf)
   * LLM 的 A*。A* 每次是根据 g(n) 和 h(n) 来选路线的，不需要等模型执行完全过程；在 a* 算法中， 通常我们也会将距离称为代价f，和起点的距离称为历史代价g，和终点的距离称为未来预期代价h ，f=g+h 。距离最近也就是代价最小，就是（g+h）最小。
@@ -46,6 +46,14 @@ Organize some of my insights and paper reading records. Total Count：25
   * 作者发现 gradient clipping 一般在 0.2 左右，所以直接用 clip 0.3 来稳定训练
   * 尝试 SGD，努力以后放弃；用和 adam 相同学习率会很快就不下降了，用更大的学习率也没有明显收益
   * [来自知乎] 自BERT和GPT之后，NLP领域的技术就在原地打转了，BERT在2018年9月出来，大家经过四年的努力，发现Scale up 是目前唯一正确的解决方案  
+* 2022 - [Training Compute-Optimal Large Language Models](https://arxiv.org/abs/2203.15556)
+  * 本文探讨了模型大小 N 和训练数据量 D 的匹配关系，提出现有的大模型都是训练不充分的，当模型大小倍增时，训练数据量也应该倍增，作者最终得到一个效果很好的 70B chinchilla
+  * 在给定训练计算资源的情况下，作者做了一系列不同大小的模型实验，并把不同计算资源下的最优的配置记录下来，可以看到，随着计算资源的增长，数据和模型参数量应当以同数量级增长
+  * 上述第一个实验是固定一个模型的参数量大小，然后在整个训练过程中观察性能变化
+  * 和前一个实验类似，第二个实验对于给定的计算资源，看不同参数量的模型的最终训练效果，结论是类似的
+  * 把上面两组实验的所有结果放在一起，通过“classical risk decomposition” 拟合，认为 Gopher 最优参数量在 40B 左右，而当前的 Gopher 参数量是 280B
+  * 综上，作者估计当前 Gopher 模型大小需要 17 倍训练时长才充分，或者应当把模型大小调整到 40B-70B
+  * [想法] 论文观感相当好，efficient net 既视感
 * 2021 - [Aligning AI With Shared Human Values](https://arxiv.org/pdf/2008.02275.pdf)
   * 构建了一个伦理相关数据集，commonsense, deontology, justice, utilitarianism, and virtue. 即常识、义务论、正义、功利主义和美德。在这些定义下，可以构建争议较小的道德场景判断
   * 题外话：MMLU 评测集中的道德情景，GPT4 表现相当好
@@ -147,3 +155,13 @@ ambiguity to the occluded areas and breaks the symmetricity of the feature match
   * process model 可以自动把揭示地图迷雾和游戏进程的推进联系起来，也能把注意到各种属性的意义
   * 训练 progress model 时，随机选取专家轨迹中的两帧，让 model 估计这两帧的有向时间差；在训练 agent 的时候，选择让 progress model 衡量当前 t 时刻局面和 t-8 时刻局面的进程差，作为一种奖励
   * 用 learning 的方式替代对于各种属性特征的手工奖励建模，在 nethack 中非常合理 
+* 2021 - [What Matters for On-Policy Deep Actor-Critic Methods? A Large-Scale Study](https://openreview.net/pdf?id=nIAxjsniDzg)
+  * 本文是 PPO 时代的又一实践指导工作，给出的一些建议相当有用，本文宣称至少考虑了实现中的 50 种选择和包含 250’000 组实验验证
+  * 附录有 50 页可以用来当调参手册
+  * 不管是从鲁棒性还是最优性考量，PPO 是 actor-critic 中最好的
+  * 总体来说 actor-critic 不共享参数比较好，policy 网络的初始值有出乎意料的巨大影响
+  * 对于规范化技术，优先考虑 observation normalization，其次考虑 gradient clipping
+  * 调大 num_epochs，打乱多个环境收集的样本，并且 per data pass 计算 adv
+  * gamma 需要精细调整，用 Adam with β1 = 0.9，精心选一个学习率，通常 3e-4 比较安全
+  * [想法] 可惜这篇不做 atari，在我心目中 atari 的场景多样性好很多
+  * [想法] RL 和 GAN 在 TRPO 及其前时代恶名远播，这几年社区不仅有更稳定的算法（PPOv2），还有更多开源的优秀实现和很多经验总结，使得 RL 至少在实验场景下变得更加可用了
