@@ -1,7 +1,7 @@
 # brief_paper_reading
 主要是记录一些这几年读的 paper，持续搬运中，欢迎指正
 
-Organize some of my insights and paper reading records. Total Count：36
+Organize some of my insights and paper reading records. Total Count：38
 ## LLM
 * 2024 - [ToolChain*: Efficient Action Space Navigation in Large Language Models with A* Search](https://arxiv.org/pdf/2310.13227.pdf)
   * LLM 的 A*。A* 每次是根据 g(n) 和 h(n) 来选路线的，不需要等模型执行完全过程；在 a* 算法中， 通常我们也会将距离称为代价f，和起点的距离称为历史代价g，和终点的距离称为未来预期代价h ，f=g+h 。距离最近也就是代价最小，就是（g+h）最小。
@@ -193,8 +193,13 @@ ambiguity to the occluded areas and breaks the symmetricity of the feature match
   * 在各种需要回归数值的地方放上符号对数预测，使得各种定义的尺度变化对模型影响变小
   * 还有一个改进是作者认为 critic 直接回归值不够好，改成回归分布
   * 使模型完全可以离线训练，replayed step 倍数越大，训的越好
-  * 大 policy 模型不仅上限高，而且数据效率也高 
-* 2022 - [Video PreTraining (VPT): Learning to Act by Watching Unlabeled Online Videos]()
+  * 大 policy 模型不仅上限高，而且数据效率也高
+* 2023 - [Become a Proficient Player with Limited Data through Watching Pure Videos ](https://openreview.net/forum?id=Sy-o2N0hF4f)
+  * 提供了一种从纯 video 预训练强化学习模型的方法
+  * 专门收集数据贵，只看 video 来预训练会更方便，核心就是构建某种无监督 consistency，在 atari 任务上训练
+  * 预训练的时候不用真的去拟合动作空间，只要学一个动作隐空间即可，finetune 的时候再学，构建重建和前后一致性的 loss
+  * [想法] 感觉还挺靠谱的，技术上的贡献比较扎实
+* 2022 - [Video PreTraining (VPT): Learning to Act by Watching Unlabeled Online Videos](https://openreview.net/pdf?id=AXDNM76T1nc)
   * 这篇论文研究了如何用大量的 minecraft 未标注游戏视频来帮助强化学习，实现一些非常难的任务（比如挖钻石）
   * 这篇 paper 有 9 个作者，说是至少都全职投入了半年，完整训练一次需要 “9 days on 720 V100 GPUs”，附录二十多页
   * 收集数据：随便从网上找 270k hours 数据，然后过滤一下，去掉那些水印，主播露脸，创造模型，非 pc 平台的数据，得到 70k hours 的干净数据；训练一个逆动力学模型 IDM：找一些人来玩 2k hours，记录键盘鼠标操作，然后用这些标注蒸馏出一个从 video 反推键鼠操作的模型；用 IDM 给所有视频打标签，开始模仿学习；经过模型学习预训练后，模型已经表现出相当的智能（会做很多基本的事情，比如砍树、游泳、打猎、跳柱）；然后作者研究这样的预训练对于下游任务的作用
