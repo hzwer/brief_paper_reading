@@ -1,7 +1,7 @@
 # brief_paper_reading
 主要是记录一些这几年读的 paper，持续搬运中，欢迎指正
 
-Organize some of my insights and paper reading records. Total Count：33
+Organize some of my insights and paper reading records. Total Count：34
 ## LLM
 * 2024 - [ToolChain*: Efficient Action Space Navigation in Large Language Models with A* Search](https://arxiv.org/pdf/2310.13227.pdf)
   * LLM 的 A*。A* 每次是根据 g(n) 和 h(n) 来选路线的，不需要等模型执行完全过程；在 a* 算法中， 通常我们也会将距离称为代价f，和起点的距离称为历史代价g，和终点的距离称为未来预期代价h ，f=g+h 。距离最近也就是代价最小，就是（g+h）最小。
@@ -170,7 +170,13 @@ ambiguity to the occluded areas and breaks the symmetricity of the feature match
     * BN 可以帮助超分模型训练，但因为训练推理的不对称性，会出现一些 artifacts
     * 把重参数化放到 SR 里，很多类似 paper
     * 在超分上，BN 的统计量有点问题，观察训练曲线，发现 validation 时常爆炸，train curve 一直很正常
-    * 在训练最后阶段用 population 统计量代替 mini-batch 统计量（我理解就是把 BN 切换成 eval 模式再微调），涨了一些点   
+    * 在训练最后阶段用 population 统计量代替 mini-batch 统计量（我理解就是把 BN 切换成 eval 模式再微调），涨了一些点
+  * 2019 - [Single Image Reﬂection Removal Exploiting Misaligned Training Data and Network Enhancements](https://openaccess.thecvf.com/content_CVPR_2019/papers/Wei_Single_Image_Reflection_Removal_Exploiting_Misaligned_Training_Data_and_Network_CVPR_2019_paper.pdf)
+    * 一篇做图片去反射的问题，主要提高了模型在真实数据上的表现
+    * 亮点主要在损失函数部分，提出了对于不对齐的训练数据计算损失函数的一些方法
+    * 作者认为 vgg 由于存在大量的 maxpooling，对于不对齐应该是不敏感的，于是分析了一下能否用某一层的 feature 来计算 loss
+    * 用 conv5_2 计算 loss，训练结果接近 contextual loss（这个 loss 的计算量巨大）
+    * [想法] misalign 的问题我思考了好久，没想到用 perceptual loss 就能解的这么好
 ## Reinforcement Learning
 * 2023 - [Learning About Progress From Experts](https://openreview.net/pdf?id=sKc6fgce1zs)
   * 强化学习，nethack 这类流程步骤非常长的游戏，直接从显式奖励中并不好学习，本文提出专家的示例隐含着对游戏进程推进的指示信息，可以先从专家的游戏视频中学出一个指示游戏进程的 progress model，来提供 reward
