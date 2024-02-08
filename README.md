@@ -225,3 +225,8 @@ ambiguity to the occluded areas and breaks the symmetricity of the feature match
   * OpenIE 会自动构建出 ⟨subject, relation, object⟩ 的三元组关系，感觉是对自然语言的一种显式的逻辑化解读
   * 作者把找出的所有三元组按一个预设规则生成图，对所有 action 进行得分计算，可以看作 action 和图关系的一个关联度计算
   * [想法] 我觉得构造一种 action space 剪枝的方法会很有趣，但是可能按 nn 的思路会做的更隐式一点，比如说鼓励 agent 尝试一些让环境变化比较大的动作
+## Others
+* [Training Deep Networks with Synthetic Data: Bridging the Reality Gap by Domain Randomization](https://arxiv.org/pdf/1804.06516.pdf )
+  * 对于车辆更有道理的数据增广，借助渲染器改改光照颜色纹理等
+  * 给车贴上随机的纹理，放到随机光照的随机场景中。再在场景中加入一些奇怪的漂浮物
+  * [想法] 个人觉得 DR 和后来的 adversary training，texture dropout 殊途同归，强迫 nn 关注某一些不变的特征
