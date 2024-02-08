@@ -1,2 +1,2 @@
-# hzwer_paper_reading
-My paper reading and insights record
+# briefly_paper_reading
+## LLM
