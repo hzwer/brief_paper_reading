@@ -3,7 +3,7 @@
 
 主要领域 LLM，Video, Low-level Vision, Reinfercement Learning
 
-Organize some of my insights and paper reading records. Total Count：40
+Organize some of my insights and paper reading records. Total Count：43
 ## LLM
 ### 2024 - [ToolChain*: Efficient Action Space Navigation in Large Language Models with A* Search](https://arxiv.org/pdf/2310.13227.pdf)
   * LLM 的 A*。A* 每次是根据 g(n) 和 h(n) 来选路线的，不需要等模型执行完全过程；在 a* 算法中， 通常我们也会将距离称为代价f，和起点的距离称为历史代价g，和终点的距离称为未来预期代价h ，f=g+h 。距离最近也就是代价最小，就是（g+h）最小。
@@ -111,7 +111,7 @@ Organize some of my insights and paper reading records. Total Count：40
   * 整合一些插帧算法的光流估计设计思路，多尺度多阶段地去把目标帧到输入帧的光流估计出来，然后用光流 warping 和遮挡 mask 去混合输入帧，loss 方面用 deep supervision 做一下
   * 有的帧可能有高速行驶的车辆，有的帧可能就是静态的场景，用相同的结构一起做显然是浪费，于是设计出一个能自动跳过一些 block 的网络
   * 经过动态设计，模型推理又能无痛省一半计算量
-### 2022 - [What Makes RAFT Better Than PWC-Net?](https://arxiv.org/pdf/2203.10712.pdf)
+### 2022 - [Disentangling Architecture and Training for Optical Flow](https://arxiv.org/pdf/2203.10712.pdf)
   * 研究三个经典网络光流估计的结构 ：PWC-Net, IRR-PWC 和 RAFT，在现代的训练技巧下，各种操作带来的提点
   * 只要参数好好调，PWC-Net 的 loss 可以下降到原来的一半（不比 RAFT 差多少）；然后把发现的这些训练 trick 灌给 RAFT，能获得新的 SOTA
   * 宣称PWC-Net 显存开销小，适合做 4k 光流，而且小运动可能做的好点（猜测是 RAFT 8 倍下采样导致）
@@ -131,6 +131,20 @@ Organize some of my insights and paper reading records. Total Count：40
   * 光流模型需要 coarse-to-fine
   * 以 DAIN 论文为分界线，DAIN 以前有很多 idea 不错的论文，但数据集小效果就不好
   * 遇事不决就 end-to-end，data-driven，手工设计很可能不如 CNN
+### 2022 - [VideoINR: Learning Video Implicit Neural Representation for Continuous Space-Time Super-Resolution](https://arxiv.org/abs/2206.04647)
+  * LIIF（把图片表示成隐式场，用 MLP 可以 query 每个像素值，用来实现任意倍率超分）的后续工作
+  * 实现任意倍分辨率任意倍速
+  * 训练需要两阶段，从易到难
+  * [想法] 相比 LIIF 做法没有特别出乎意料，动态场景还是绕不开光流那一套：要用光流，肯定要上数据集，那么就得是个可泛化的场，然后就会越搞越像 CNN
+### 2022 - [SinNeRF: Training Neural Radiance Fields on Complex Scenes from a Single Image](https://arxiv.org/pdf/2204.00928.pdf)
+  * 单图出 NeRF
+  * 约束 NeRF 进行的推算符合已有 depth，然后再用 dino 和 GAN 来约束生成图的纹理和参考图像
+  * 这个 GAN 有些神奇，采用了 DiffAugment 做 GAN 的数据增强，DiffAugment 号称一百张图能训练一个 GAN
+  * 本文用半监督的世界观将这两个部分描述为 Geometry Pseudo Label 和 Semantic Pseudo Label
+  * 对于处于一些遮挡区域的pixel，其对应的depth无法计算确定。为了降低不确定区域的depth uncertainty，论文采用了DDVO 论文中depth smooth约束，即利用pixel的二阶导保证depth的一致性，并且作者还设计了把 depth 映到 reference view 的一致性
+  * GAN 的提升有限，cls（局部 texture 监督）还是起到作用了
+  * [想法] 有 depth 的情况下实际上转相机是有点 trivial 的，加一些 inpainting 感觉也能出个效果，那么这篇我理解就是把 inpaining 蒸馏进 NeRF 的参数里
+  * [想法] 感觉这两年相关领域的重要 trick 都被吸收了
 ### 2020 - [UPFlow: Upsampling Pyramid for Unsupervised Optical Flow Learning](https://arxiv.org/pdf/2012.00212.pdf)
   * 无监督光流，trick 大礼包
   * bottom-up problem: 光流上采样时，采用 bilinear/bicubic resize 导致模糊。本文引入了 self-guided upsampling module (SGU)
@@ -248,6 +262,13 @@ ambiguity to the occluded areas and breaks the symmetricity of the feature match
   * 作者把找出的所有三元组按一个预设规则生成图，对所有 action 进行得分计算，可以看作 action 和图关系的一个关联度计算
   * [想法] 我觉得构造一种 action space 剪枝的方法会很有趣，但是可能按 nn 的思路会做的更隐式一点，比如说鼓励 agent 尝试一些让环境变化比较大的动作
 ## Others
+### 2021 - [Simple but Effective: CLIP Embeddings for Embodied AI](https://arxiv.org/pdf/2111.09888.pdf)
+  * CLIP 的 ResNet50 放在 Embodied AI 的一众下游任务上，可以达到降维打击的效果。Embodied AI 主要是关注机器人和环境的交互
+  * 分析 CLIP 相对 imagenet 训练模型的优势，通过研究四个基础任务 “object presence, object presence at a location, object reachability, and free space”
+“free space” 字面不好理解，定义为 “predict how many steps an agent can move forward given an egocentric view”
+  * 看起来 CLIP 主要提升了 “Object Localization” 的性能
+  * 作者认为不能靠 imagenet 分类精度来评判模型在下游任务表现
+  * [想法] 全文贯彻了 Simple but Effective 的理念，而且关注在 Embodied AI 领域，但是我们仍然有很多问题想知道，比如 finetune CLIP 有没有好处，CLIP 还能让什么任务受益？
 ### 2019 - [Training Deep Networks with Synthetic Data: Bridging the Reality Gap by Domain Randomization](https://arxiv.org/pdf/1804.06516.pdf)
   * 对于车辆更有道理的数据增广，借助渲染器改改光照颜色纹理等
   * 给车贴上随机的纹理，放到随机光照的随机场景中。再在场景中加入一些奇怪的漂浮物
