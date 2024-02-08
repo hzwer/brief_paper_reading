@@ -1,7 +1,7 @@
 # brief_paper_reading
 主要是记录一些这几年读的 paper，持续搬运中，欢迎指正
 
-Organize some of my insights and paper reading records. Total Count：35
+Organize some of my insights and paper reading records. Total Count：36
 ## LLM
 * 2024 - [ToolChain*: Efficient Action Space Navigation in Large Language Models with A* Search](https://arxiv.org/pdf/2310.13227.pdf)
   * LLM 的 A*。A* 每次是根据 g(n) 和 h(n) 来选路线的，不需要等模型执行完全过程；在 a* 算法中， 通常我们也会将距离称为代价f，和起点的距离称为历史代价g，和终点的距离称为未来预期代价h ，f=g+h 。距离最近也就是代价最小，就是（g+h）最小。
@@ -108,7 +108,15 @@ Organize some of my insights and paper reading records. Total Count：35
   * 视频预测，OPT 提出在 Vimeo90K 训练集训练出的插帧模型都能当合理的 loss 度量，跨数据集也泛化得不错，那直接在 Vimeo90K 上训练外插模型应该性能也会很好
   * 整合一些插帧算法的光流估计设计思路，多尺度多阶段地去把目标帧到输入帧的光流估计出来，然后用光流 warping 和遮挡 mask 去混合输入帧，loss 方面用 deep supervision 做一下
   * 有的帧可能有高速行驶的车辆，有的帧可能就是静态的场景，用相同的结构一起做显然是浪费，于是设计出一个能自动跳过一些 block 的网络
-  * 经过动态设计，模型推理又能无痛省一半计算量
+  * 经过动态设计，模型推理又能无痛省一半计算量 
+* 2022 - [Unifying Flow, Stereo and Depth Estimation](https://arxiv.org/pdf/2211.05783.pdf)
+  * CVPR22-GMFlow 的期刊版本，将 GMFlow 架构从光流扩展到立体匹配和深度估计
+  * 考虑到这几个任务具有内在联系，但目前的模型结构各异，体现在 cost volume 光流是 2D，立体匹配是 1D，作者用统一的框架来解决这些问题
+  * GMFlow 的核心思想是用 cross-attention 做特征全局匹配，然后用 softmax 导出光流
+  * 立体匹配和深度估计的原理是类似的，基本上是把光流的做法降一个维度
+  * 1. 特征提取：用 ResNet 提取出 1/8 分辨率特征，加上 positional encoding。然后把两张图出的 feature 做 cross-attention，这里用的 transformer 是类似 swin 的版本；2. 传播：在特征上直接用 softmax 导出光流显然是不够的，考虑到很多区域可能无法匹配上（因为遮挡等原因），所以求得光流结果以后，再做一次 self-attention 自传播；3. 细化：此前都是在 1/8 分辨率上做计算，为了进一步精细化光流，又把全图分成若干块，每一块在 1/4 分辨率上再计算一遍，两次计算可以 share 一部分的模块参数，具体不表，这一部分称为 “Hierarchical Matching Refinement”
+  * 这种架构一个很有意思的好处是，当把 softmax 的维度转一下，就可以从计算正向光流变成计算反向光流
+  * [想法] 把光流估计的地位提高了一把，作者的 codebase 写的非常好，可以很方便地把 transformer 相关的代码一键用到其他 model 里
 * 2022 - [Real-Time Intermediate Flow Estimation for Video Frame Interpolation](https://arxiv.org/pdf/2011.06294.pdf)
   * 重新审视了以往的光流插帧中的流估计，以及提出一种特权蒸馏的方式帮助模型学习光流
   * 光流网络抛弃预训练，应该针对任务设计以后 from scratch 训练
