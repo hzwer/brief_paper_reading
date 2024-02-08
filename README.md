@@ -1,5 +1,5 @@
-# briefly_paper_reading
-Total Count：16
+# brief_paper_reading
+Organize some of my insights and paper reading records. Total Count：16
 ## LLM
 * 2024 - [xCodeEval: A Large Scale Multilingual Multitask Benchmark for Code Understanding, Generation, Translation and Retrieval](https://arxiv.org/pdf/2303.03004.pdf)
   * coding 数据集工作，收集了 codeforces 的 7.5k 题目和相关的 5M+ 解答，构造七个任务（检索，翻译等），分析 chatGPT 的表现
