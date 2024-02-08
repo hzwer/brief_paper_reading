@@ -1,7 +1,7 @@
 # brief_paper_reading
 主要是记录一些这几年读的 paper，持续搬运中，欢迎指正
 
-Organize some of my insights and paper reading records. Total Count：27
+Organize some of my insights and paper reading records. Total Count：29
 ## LLM
 * 2024 - [ToolChain*: Efficient Action Space Navigation in Large Language Models with A* Search](https://arxiv.org/pdf/2310.13227.pdf)
   * LLM 的 A*。A* 每次是根据 g(n) 和 h(n) 来选路线的，不需要等模型执行完全过程；在 a* 算法中， 通常我们也会将距离称为代价f，和起点的距离称为历史代价g，和终点的距离称为未来预期代价h ，f=g+h 。距离最近也就是代价最小，就是（g+h）最小。
@@ -47,7 +47,15 @@ Organize some of my insights and paper reading records. Total Count：27
   * 使用 AdamW 作为优化器，(β1,β2) = (0.9,0.95)，weight decay 是 0.1（默认是 0.01，据说在大模型训练时偏小）
   * 作者发现 gradient clipping 一般在 0.2 左右，所以直接用 clip 0.3 来稳定训练
   * 尝试 SGD，努力以后放弃；用和 adam 相同学习率会很快就不下降了，用更大的学习率也没有明显收益
-  * [来自知乎] 自BERT和GPT之后，NLP领域的技术就在原地打转了，BERT在2018年9月出来，大家经过四年的努力，发现Scale up 是目前唯一正确的解决方案  
+  * [来自知乎] 自BERT和GPT之后，NLP领域的技术就在原地打转了，BERT在2018年9月出来，大家经过四年的努力，发现Scale up 是目前唯一正确的解决方案 
+* 2022 - [Constitutional AI: Harmlessness from AI Feedback](https://arxiv.org/abs/2212.08073)
+  * 这篇 paper 研究如何在保持 LM AI 智商的情况下，使得它更无害（减少胡说八道），给出的方案是用自学习的办法
+  * harmlessness 和 helpfulness 之间不完全兼容（例如对所有问题都回答不知道的 LM 是无害的，但是也没用了），本文试图提出一种帕累托改进方案
+  * 首先作者人工迭代了十条由语言描述的 原则，做法主要有两部分：第一步是监督学习：Critique → Revision → Supervised Learning
+  * 简单来说就是让 LM 对一些有害的提示词作回复，这时候 LM 往往也产生有害的内容，接着随机选一些原则，让 LM 对它的回答进行修改，这样相当于产生了修正的标签，用这些标签进行监督学习
+  * 第二步是强化学习：AI Comparison Evaluations → Preference Model → Reinforcement Learning
+  * 作者说这里类似 RLHF，在 RLHF 中，Human feedback 被蒸馏成 reward model；在这里，由人类来对 LM 回复的 helpfulness 进行打分，而 harmfulness 依然由 AI 自己打分，这样构建数据集得到一个 preference model（PM），最后由 PM + RL 再调整一下原来的 LM 模型
+  * 在这个过程中 CoT 可以直接把大模型在 HHH Eval 上的性能提高一截：
 * 2022 - [Training Compute-Optimal Large Language Models](https://arxiv.org/abs/2203.15556)
   * 本文探讨了模型大小 N 和训练数据量 D 的匹配关系，提出现有的大模型都是训练不充分的，当模型大小倍增时，训练数据量也应该倍增，作者最终得到一个效果很好的 70B chinchilla
   * 在给定训练计算资源的情况下，作者做了一系列不同大小的模型实验，并把不同计算资源下的最优的配置记录下来，可以看到，随着计算资源的增长，数据和模型参数量应当以同数量级增长
@@ -156,7 +164,13 @@ ambiguity to the occluded areas and breaks the symmetricity of the feature match
   * 一个细节是需要把 state 里面直接表示时间的部分手动移除掉
   * process model 可以自动把揭示地图迷雾和游戏进程的推进联系起来，也能把注意到各种属性的意义
   * 训练 progress model 时，随机选取专家轨迹中的两帧，让 model 估计这两帧的有向时间差；在训练 agent 的时候，选择让 progress model 衡量当前 t 时刻局面和 t-8 时刻局面的进程差，作为一种奖励
-  * 用 learning 的方式替代对于各种属性特征的手工奖励建模，在 nethack 中非常合理 
+  * 用 learning 的方式替代对于各种属性特征的手工奖励建模，在 nethack 中非常合理
+* 2023 - [Mastering Diverse Domains through World Models](https://danijar.com/project/dreamerv3/)
+  * 对 Dreamerv2 进行可扩展性方面的升级， 能够在跨domain无需调整超参数的情况下，可以实现包括连续和离散动作，视觉和低维输入，2D和3D世界，不同的数据预算、奖励频率和奖励等级的全部任务
+  * 在各种需要回归数值的地方放上符号对数预测，使得各种定义的尺度变化对模型影响变小
+  * 还有一个改进是作者认为 critic 直接回归值不够好，改成回归分布
+  * 使模型完全可以离线训练，replayed step 倍数越大，训的越好
+  * 大 policy 模型不仅上限高，而且数据效率也高
 * 2021 - [What Matters for On-Policy Deep Actor-Critic Methods? A Large-Scale Study](https://openreview.net/pdf?id=nIAxjsniDzg)
   * 本文是 PPO 时代的又一实践指导工作，给出的一些建议相当有用，本文宣称至少考虑了实现中的 50 种选择和包含 250’000 组实验验证
   * 附录有 50 页可以用来当调参手册
