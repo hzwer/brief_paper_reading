@@ -1,7 +1,7 @@
 # brief_paper_reading
 主要是记录一些这几年读的 paper，持续搬运中，欢迎指正
 
-Organize some of my insights and paper reading records. Total Count：34
+Organize some of my insights and paper reading records. Total Count：35
 ## LLM
 * 2024 - [ToolChain*: Efficient Action Space Navigation in Large Language Models with A* Search](https://arxiv.org/pdf/2310.13227.pdf)
   * LLM 的 A*。A* 每次是根据 g(n) 和 h(n) 来选路线的，不需要等模型执行完全过程；在 a* 算法中， 通常我们也会将距离称为代价f，和起点的距离称为历史代价g，和终点的距离称为未来预期代价h ，f=g+h 。距离最近也就是代价最小，就是（g+h）最小。
@@ -77,11 +77,6 @@ Organize some of my insights and paper reading records. Total Count：34
    * 有从易到难的 19 个任务，并且包括程序写的解法用来克隆学习；模拟很快，每秒也是千帧级，而且可回溯；Goal 用语言描述，虽然不是纯自然语言，但也是一个非常大的组合空间，称为 baby language
    * 在 1M 交互的训练下，模型能有不错的结果，一些预训练对更高级任务是有帮助的
    * 先用一个很小的数据集训 agent，训完以后加入一部分它 fail 的带标注数据，如此反复迭代；像是一种 hard example mining
-  * 2018 - [Playing text-adventure games with graph-based deep reinforcement learning](https://arxiv.org/abs/1812.01628)
-   * 在强化学习的探索过程中学习 knowledge graph，可以用来对动作空间进行剪枝
-   * OpenIE 会自动构建出 ⟨subject, relation, object⟩ 的三元组关系，感觉是对自然语言的一种显式的逻辑化解读
-   * 作者把找出的所有三元组按一个预设规则生成图，对所有 action 进行得分计算，可以看作 action 和图关系的一个关联度计算
-   * [想法] 我觉得构造一种 action space 剪枝的方法会很有趣，但是可能按 nn 的思路会做的更隐式一点，比如说鼓励 agent 尝试一些让环境变化比较大的动作
 ## Base Model
 * 2022 - [Online convolutional re-parameterization](http://openaccess.thecvf.com/content/CVPR2022/html/Hu_Online_Convolutional_Re-Parameterization_CVPR_2022_paper.html)
   * 这篇一个核心的证明是说，带有 scaling 的多分支卷积不会退化成单个卷积
@@ -213,3 +208,12 @@ ambiguity to the occluded areas and breaks the symmetricity of the feature match
   * gamma 需要精细调整，用 Adam with β1 = 0.9，精心选一个学习率，通常 3e-4 比较安全
   * [想法] 可惜这篇不做 atari，在我心目中 atari 的场景多样性好很多
   * [想法] RL 和 GAN 在 TRPO 及其前时代恶名远播，这几年社区不仅有更稳定的算法（PPOv2），还有更多开源的优秀实现和很多经验总结，使得 RL 至少在实验场景下变得更加可用了
+* 2019 - [Learning to Paint with Model-based Deep Reinforcement Learning](https://openaccess.thecvf.com/content_ICCV_2019/html/Huang_Learning_to_Paint_With_Model-Based_Deep_Reinforcement_Learning_ICCV_2019_paper.html)
+  * 一个试图联系视觉和强化学习的工作
+  * 使用深度强化学习模型来解决绘画任务，模型能将一张图像解耦为成百的笔画序列，并生成一个与目标图像相似的绘画作品（抽象和临摹）
+  * 使用了神经网络绘制器来实现高效的绘画过程，提高了模型的性能
+* 2018 - [Playing text-adventure games with graph-based deep reinforcement learning](https://arxiv.org/abs/1812.01628)
+  * 在强化学习的探索过程中学习 knowledge graph，可以用来对动作空间进行剪枝
+  * OpenIE 会自动构建出 ⟨subject, relation, object⟩ 的三元组关系，感觉是对自然语言的一种显式的逻辑化解读
+  * 作者把找出的所有三元组按一个预设规则生成图，对所有 action 进行得分计算，可以看作 action 和图关系的一个关联度计算
+  * [想法] 我觉得构造一种 action space 剪枝的方法会很有趣，但是可能按 nn 的思路会做的更隐式一点，比如说鼓励 agent 尝试一些让环境变化比较大的动作
