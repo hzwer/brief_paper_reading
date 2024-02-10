@@ -3,6 +3,9 @@
 
 主要领域 LLM，Video, Low-level Vision, Reinfercement Learning
 
+扩展阅读：
+[走出新手村」十次 CV 论文会议投稿的经验总结.pdf](https://drive.google.com/file/d/1w2ZgIF1Q92Li_p7pCDPJFT_0312Cv2QC/view?usp=sharing)
+
 Organize some of my insights and paper reading records. Total Count：50
 ## LLM
 ### 2024 - [ToolChain*: Efficient Action Space Navigation in Large Language Models with A* Search](https://arxiv.org/pdf/2310.13227.pdf)
