@@ -17,7 +17,7 @@ Organize some of my insights and paper reading records. Total Count：51
   * 用法示例 1 内容审核：虽然 openai 提供了比较准确的内容审核 api，但依然可以人工找到很多漏网之鱼，在用户的毒 instruction 攻击下， llama2-chat 防的比较好（所有毒性检测是由 openai 的 api 完成的）；从每一类中选了 1k 个样本，让 gpt4 生成将其标记为不良内容的原因作蒸馏，并加上了 1k 正常样本和 3k 的 sharegpt 样本进行训练，这样能使得 7B 模型也有较强的判别效果 
   * 用法示例 2 安全基准：作者挑选了对于不同模型攻击成功的50个示例来构建一个攻击 benchmark，该 benchmark 可以用来测试模型的安全性
   * 用法示例 3 SFT：作者抽了两个训练集训练 llama2-7B，HQ是由claude或者chatgpt作回答的子集，Upvote是由用户点赞的数据，Vicuna > LLama > HQ > Upvote，HQ 只有 Vicuna 训练集 的 1/10，依然达到了很不错的性能
-  * 用法示例 4 模型评测：作者提供的平台上，支持模型对战操作，作者认为在这个模式下，用户提出的问题可能更有判别性。作者用 gpt3.5 对 50k prompt 进行了打分，分数越高意味着“a greater potential to evaluate the LLMs in problem-solving, creativity and truthfulness”；作者从 >8 和 <2 中各抽了 50 个题，发现在 <2 的子集中，确实难以区分 GPT4 和 GPT3.5，而 >8 子集则有较强的区分
+  * 用法示例 4 模型评测：作者提供的平台上，支持模型对战操作，作者认为在这个模式下，用户提出的问题可能更有判别性。作者用 gpt3.5 对 50k prompt 进行了打分，分数越高意味着“a greater potential to evaluate the LLMs in problem-solving, creativity and truthfulness”；作者从 >8 和 <2 中各抽了 50 个题，发现在 <2 子集中，确实难以区分 GPT4 和 GPT3.5，而 >8 子集则有较强的区分
   * 除此之外，这个数据集也可能用于隐私、安全、RLHF 等方向的研究
 ### 2024 - [ToolChain*: Efficient Action Space Navigation in Large Language Models with A* Search](https://arxiv.org/pdf/2310.13227.pdf)
   * LLM 的 A*。A* 每次是根据 g(n) 和 h(n) 来选路线的，不需要等模型执行完全过程；在 a* 算法中， 通常我们也会将距离称为代价f，和起点的距离称为历史代价g，和终点的距离称为未来预期代价h ，f=g+h 。距离最近也就是代价最小，就是（g+h）最小。
@@ -71,7 +71,7 @@ Organize some of my insights and paper reading records. Total Count：51
   * 简单来说就是让 LM 对一些有害的提示词作回复，这时候 LM 往往也产生有害的内容，接着随机选一些原则，让 LM 对它的回答进行修改，这样相当于产生了修正的标签，用这些标签进行监督学习
   * 第二步是强化学习：AI Comparison Evaluations → Preference Model → Reinforcement Learning
   * 作者说这里类似 RLHF，在 RLHF 中，Human feedback 被蒸馏成 reward model；在这里，由人类来对 LM 回复的 helpfulness 进行打分，而 harmfulness 依然由 AI 自己打分，这样构建数据集得到一个 preference model（PM），最后由 PM + RL 再调整一下原来的 LM 模型
-  * 在这个过程中 CoT 可以直接把大模型在 HHH Eval 上的性能提高一截：
+  * 在这个过程中 CoT 可以直接把大模型在 HHH Eval 上的性能提高一截
 ### 2022 - [Training Compute-Optimal Large Language Models](https://arxiv.org/abs/2203.15556)
   * 本文探讨了模型大小 N 和训练数据量 D 的匹配关系，提出现有的大模型都是训练不充分的，当模型大小倍增时，训练数据量也应该倍增，作者最终得到一个效果很好的 70B chinchilla
   * 在给定训练计算资源的情况下，作者做了一系列不同大小的模型实验，并把不同计算资源下的最优的配置记录下来，可以看到，随着计算资源的增长，数据和模型参数量应当以同数量级增长
@@ -326,4 +326,4 @@ ambiguity to the occluded areas and breaks the symmetricity of the feature match
 ### 2019 - [Training Deep Networks with Synthetic Data: Bridging the Reality Gap by Domain Randomization](https://arxiv.org/pdf/1804.06516.pdf)
   * 对于车辆更有道理的数据增广，借助渲染器改改光照颜色纹理等
   * 给车贴上随机的纹理，放到随机光照的随机场景中。再在场景中加入一些奇怪的漂浮物
-  * [想法] 个人觉得 DR 和后来的 adversary training，texture dropout 殊途同归，强迫 nn 关注某一些不变的特征
+  * [想法] 个人觉得 DR 和后来的 adversarial training，texture dropout 殊途同归，强迫 nn 关注某一些不变的特征
