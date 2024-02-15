@@ -6,8 +6,19 @@
 扩展阅读：
 [走出新手村」十次 CV 论文会议投稿的经验总结.pdf](https://drive.google.com/file/d/1w2ZgIF1Q92Li_p7pCDPJFT_0312Cv2QC/view?usp=sharing)
 
-Organize some of my insights and paper reading records. Total Count：50
+Organize some of my insights and paper reading records. Total Count：51
 ## LLM
+### 2024 - [RealChat-1M: A Large-Scale Real-World LLM Conversation Dataset](https://openreview.net/forum?id=BOfDKxfwt0)
+  * 一篇做数据集的工作，包含 1M 轮人类和 LLM 的对话（平均两对），和以往数据集的对比，主要突出一个大
+  * 收集这个数据主要的意义：一方面是学术界缺乏大规模的用户 prompt，鼓励用户和开源的弱智模型进行百万次交互本身就很困难；另一方面 vicuna 一定程度说明了收集这样的用户问题加上大模型的回答，可能可以调校出很好的对话模型。
+  * 大部分数据是 vicuna13b 生成的（作者平台的默认模型），但作者强调说如果想要获得高质量一些的结果，可以把全数据集用 gpt4 出一遍。
+  * 最多的几种语言是英语、葡萄牙语、俄语、汉语和西班牙语
+  * 从大类上看，软件、程序相关和内容生成是比较多的请求
+  * 用法示例 1 内容审核：虽然 openai 提供了比较准确的内容审核 api，但依然可以人工找到很多漏网之鱼，在用户的毒 instruction 攻击下， llama2-chat 防的比较好（所有毒性检测是由 openai 的 api 完成的）；从每一类中选了 1k 个样本，让 gpt4 生成将其标记为不良内容的原因作蒸馏，并加上了 1k 正常样本和 3k 的 sharegpt 样本进行训练，这样能使得 7B 模型也有较强的判别效果 
+  * 用法示例 2 安全基准：作者挑选了对于不同模型攻击成功的50个示例来构建一个攻击 benchmark，该 benchmark 可以用来测试模型的安全性
+  * 用法示例 3 SFT：作者抽了两个训练集训练 llama2-7B，HQ是由claude或者chatgpt作回答的子集，Upvote是由用户点赞的数据，Vicuna > LLama > HQ > Upvote，HQ 只有 Vicuna 训练集 的 1/10，依然达到了很不错的性能
+  * 用法示例 4 模型评测：作者提供的平台上，支持模型对战操作，作者认为在这个模式下，用户提出的问题可能更有判别性。作者用 gpt3.5 对 50k prompt 进行了打分，分数越高意味着“a greater potential to evaluate the LLMs in problem-solving, creativity and truthfulness”；作者从 >8 和 <2 中各抽了 50 个题，发现在 <2 的子集中，确实难以区分 GPT4 和 GPT3.5，而 >8 子集则有较强的区分
+  * 除此之外，这个数据集也可能用于隐私、安全、RLHF 等方向的研究
 ### 2024 - [ToolChain*: Efficient Action Space Navigation in Large Language Models with A* Search](https://arxiv.org/pdf/2310.13227.pdf)
   * LLM 的 A*。A* 每次是根据 g(n) 和 h(n) 来选路线的，不需要等模型执行完全过程；在 a* 算法中， 通常我们也会将距离称为代价f，和起点的距离称为历史代价g，和终点的距离称为未来预期代价h ，f=g+h 。距离最近也就是代价最小，就是（g+h）最小。
   * 整体框架是在维护一个搜索树，每次选一个最有前途的叶节点开始扩展，所以这里要把 A* 理解成一种可扩展的广度搜索算法（和算法竞赛用的 A* 不一定一样）
