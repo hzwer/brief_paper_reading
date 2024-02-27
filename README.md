@@ -6,7 +6,7 @@
 扩展阅读：
 [走出新手村」十次 CV 论文会议投稿的经验总结.pdf](https://drive.google.com/file/d/1w2ZgIF1Q92Li_p7pCDPJFT_0312Cv2QC/view?usp=sharing)
 
-Organize some of my insights and paper reading records. Total Count：51
+Organize some of my insights and paper reading records. Total Count：52
 ## LLM
 ### 2024 - [RealChat-1M: A Large-Scale Real-World LLM Conversation Dataset](https://openreview.net/forum?id=BOfDKxfwt0)
   * 一篇做数据集的工作，包含 1M 轮人类和 LLM 的对话（平均两对），和以往数据集的对比，主要突出一个大
@@ -47,7 +47,16 @@ Organize some of my insights and paper reading records. Total Count：51
 ### 2023 - [A Comparative Study between Full-Parameter and LoRA-based Fine-Tuning on Chinese Instruction Data for Instruction Following Large Language Model](https://github.com/LianjiaTech/BELLE/blob/main/docs/A%20Comparative%20Study%20between%20Full-Parameter%20and%20LoRA-based.pdf)
   * belle 团队探讨了全参数 sft 和 lora sft 的效果差异，讨论了训练开销和模型性能之间的取舍
   * 比较显著的差异是学习率，lora sft 可以使用 40x 的学习率
-  * [想法] lora 上做研究可能会很快达到瓶颈，最后大家被迫选择全参数 
+  * [想法] lora 上做研究可能会很快达到瓶颈，最后大家被迫选择全参数
+### 2023 - [OctoPack: Instruction Tuning Code Large Language Models](https://arxiv.org/pdf/2308.07124.pdf)
+  * 这篇提出了 commit pack 数据集，是 4T 的预训练数据；还提出了 humanevalpack benchmark，包括六种编程语言(Python, JavaScript, Java, Go, C++, Rust)下的写代码、修代码、代码解释任务
+  * commit pack 的子集 (74w sample) 做 sft，使得 6B 模型超过之前 starcoder 16B 的效果
+  * 作者考虑到了几类任务 HUMANEVALFIX (NL+C→C) ，HUMANEVALEXPLAIN (NL+C→NL) ，HUMANEVALSYNTHESIZE (NL→C) ；其中 Explanation 的评测方式，是让模型解释代码，根据解释重新生成一份代码，再看新代码通过率
+  * 主要有三个结论：COMMITPACKFT enables CodeLLMs to fix bugs ：是说 CommitPack 主要在 Code Fixing 帮助涨点；Importance of samples with natural language targets ：只有代码预训练的模型，不会解释代码；COMMITPACKFT+OASST yields best performance
+  * 预训练的 bloomz，在 Go 和 Rust 上是 0 分（因为语料相对太少），但是经过 sft 后有一些分数，而 sft 数据中并没有 Go 和 Rust 相关内容，作者因此说 Instruction tuning generalizes to unseen programming languages
+  * 作者提出的第二个结论是 Pretraining weight correlates with programming language performance after instruction tuning ，直觉上很自然，某种编程语言在预训练见的越多，sft 后该语言的性能就越好，比如 Rust 占的比重最少 (1.5%)，因此表现就最差
+  * 当前挑战：Models struggle with small targeted changes ，是说即使两个任务非常相近，模型也可能会做其中一个而不会做另一个；Models struggle switching between code and text 模型在 code 和 text 之间切换困难；Models struggle adhering to a specified output length 不会数字数
+  * 附录中给了 commit 相关过滤词表还有各种统计
 ### 2022 - [SCIENCEWORLD: Is your Agent Smarter than a 5th Grader?](https://arxiv.org/pdf/2203.07540.pdf)
   * LLM 在检索查表方面很强，但它们并不能在一些非常简单的实验场景验证科学概念，比如构建实验判断某个物体是否导电
   * 本文提出了一组 30 个科学实验相关的 RL tasks，涉及简单的理科实验，LLM 目前尚不能给解决这些任务带来增益
