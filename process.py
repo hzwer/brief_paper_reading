@@ -20,7 +20,7 @@ for md_file in markdown_files:
     with open(md_file, 'r', encoding='utf-8') as file:
         content = file.read()
         headers = header_pattern.findall(content)
-        # 删除标题中的链接，只保留文本
+        # 删除标题中的链接，只保留文本        
         headers = [link_pattern.sub(r'\1', header) for header in headers]
         file_headers[md_file] = headers
 
@@ -35,6 +35,7 @@ with open('tmp.md', 'w', encoding='utf-8') as readme:
         for header in headers:
             # 将标题文本转换为锚点链接
             anchor = re.sub(r'[\s\W]+', '-', header.lower()).strip('-')
+            anchor = anchor[:5] + '--' + anchor[5:]
             readme.write(f"- [{header}](./{md_file}#{anchor})\n")
         readme.write("\n")
 
