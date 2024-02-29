@@ -1,4 +1,3 @@
-
 ## Reinforcement Learning
 ### 2023 - [Learning About Progress From Experts](https://openreview.net/pdf?id=sKc6fgce1zs)
   * 强化学习，nethack 这类流程步骤非常长的游戏，直接从显式奖励中并不好学习，本文提出专家的示例隐含着对游戏进程推进的指示信息，可以先从专家的游戏视频中学出一个指示游戏进程的 progress model，来提供 reward
@@ -54,33 +53,3 @@
   * OpenIE 会自动构建出 ⟨subject, relation, object⟩ 的三元组关系，感觉是对自然语言的一种显式的逻辑化解读
   * 作者把找出的所有三元组按一个预设规则生成图，对所有 action 进行得分计算，可以看作 action 和图关系的一个关联度计算
   * [想法] 我觉得构造一种 action space 剪枝的方法会很有趣，但是可能按 nn 的思路会做的更隐式一点，比如说鼓励 agent 尝试一些让环境变化比较大的动作
-## Image Generation
-### 2022 - [One-Shot Adaptation of GAN in Just One CLIP](https://arxiv.org/pdf/2203.09301.pdf)
-  * 以往将一组图片变成 novel domain 的工作，仅靠一张 novel domain 的图片不太 work（难点在于只有一张 target 的时候，GAN 训不好）；作者基于 CLIP 设计了一些 loss function，取得了不错的效果
-  * 对于一个 pretrained generator G，在它的编码空间内找一个 w，使得 G(w) 和 target 在各种语义下接近，相当于找到了一个 target 的编码
-  * 第二步作者在开集上 fine-tune 这个 G，用一致性约束；即对于两个 w，它们经过 G 和 finetuned G 的解码后，在 CLIP 语义空间上的距离相似
-  * [想法] 感觉就作者做的这件事情来说，Splice 更强；特别是本文依赖于 pretrained GAN，大多数效果由 VQGAN + CLIP 或者 StyleCLIP 也能出的差不多的感觉
-### 2022 - [Splicing ViT Features for Semantic Appearance Transfer](https://arxiv.org/abs/2201.00424)
-  * 训练一个 UNet 来做纹理迁移
-  * Dino 对图片推理得到的 cls token 经过反演，会得到一个结构破坏但内容保留的图片
-  * 图 A，图 B，G(B)，让 A 和 G(B) 外观像，B 和 G(B) 结构像（设计了两种基于预训练的 dino 的 loss，简单理解就是初版 styletransfer）
-  * [想法] G 可以很容易地适应不同的B，但是目前因为 A 不是 G 的一个输入，还不能 general 地生成 G(A, B)
-## Others
-### 2021 - [D^2LV: A Data-Driven and Local-Verification Approach for Image Copy Detection](https://arxiv.org/pdf/2111.07090.pdf)
-  * 比赛报告，这个比赛给了一个 query 集（5w张）和 ref 集（100w张），问 query 集的每一张图片，是否抄袭了 ref 集 (Copy detection)，抄袭定义为用 ref 集的某张图做素材，ps 进自己的图里，给出置信度
-  * 这是一个变种的图像检索任务，第一名的方案除了比较标准的预训练 + 对比学习以外，用了大量的图像增广和非常疯狂的 ensemble 策略
-  * 作者说虽然用无监督训练的方法直接解 copy detection 是自然的，但是由于两个原因放弃了 1）原始BYOL 8卡训了两周，再加点增广可能就做不起了 2）训不出来。所以作者用了原始的 BYOL 和 Barlow Twins 预训练模型
-  * 几十种数据增广，真的很疯狂
-  * 最终作者用了 33 个模型集成（包括不同大小的 resnet 和 IBN 变种），在 3 个图像尺度下多对一查询，图片一对多查询实在做不起了，只跑了三个模型
-  * [想法] 我起初完全没想到这个比赛能把 AP 刷到 90+，还是低估了暴力的威力
-### 2021 - [Simple but Effective: CLIP Embeddings for Embodied AI](https://arxiv.org/pdf/2111.09888.pdf)
-  * CLIP 的 ResNet50 放在 Embodied AI 的一众下游任务上，可以达到降维打击的效果。Embodied AI 主要是关注机器人和环境的交互
-  * 分析 CLIP 相对 imagenet 训练模型的优势，通过研究四个基础任务 “object presence, object presence at a location, object reachability, and free space”
-“free space” 字面不好理解，定义为 “predict how many steps an agent can move forward given an egocentric view”
-  * 看起来 CLIP 主要提升了 “Object Localization” 的性能
-  * 作者认为不能靠 imagenet 分类精度来评判模型在下游任务表现
-  * [想法] 全文贯彻了 Simple but Effective 的理念，而且关注在 Embodied AI 领域，但是我们仍然有很多问题想知道，比如 finetune CLIP 有没有好处，CLIP 还能让什么任务受益？
-### 2019 - [Training Deep Networks with Synthetic Data: Bridging the Reality Gap by Domain Randomization](https://arxiv.org/pdf/1804.06516.pdf)
-  * 对于车辆更有道理的数据增广，借助渲染器改改光照颜色纹理等
-  * 给车贴上随机的纹理，放到随机光照的随机场景中。再在场景中加入一些奇怪的漂浮物
-  * [想法] 个人觉得 DR 和后来的 adversarial training，texture dropout 殊途同归，强迫 nn 关注某一些不变的特征
