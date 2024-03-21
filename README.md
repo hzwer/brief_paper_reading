@@ -6,10 +6,10 @@
 扩展阅读：
 [走出新手村」十次 CV 论文会议投稿的经验总结.pdf](https://drive.google.com/file/d/1w2ZgIF1Q92Li_p7pCDPJFT_0312Cv2QC/view?usp=sharing)
 
-Organize some of my insights and paper reading records. Total Count：53
+Organize some of my insights and paper reading records. Total Count：54
 
 ## [LLM.md](LLM.md)
-
+- [2024 - MetaMath: Bootstrap Your Own Mathematical Questions for Large Language Models](./LLM.md#2024---metamath-bootstrap-your-own-mathematical-questions-for-large-language-models)
 - [2024 - Solving olympiad geometry without human demonstrations](./LLM.md#2024---solving-olympiad-geometry-without-human-demonstrations)
 - [2024 - RealChat-1M: A Large-Scale Real-World LLM Conversation Dataset](./LLM.md#2024---realchat-1m-a-large-scale-real-world-llm-conversation-dataset)
 - [2024 - ToolChain*: Efficient Action Space Navigation in Large Language Models with A* Search](./LLM.md#2024---toolchain-efficient-action-space-navigation-in-large-language-models-with-a-search)
