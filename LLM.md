@@ -1,4 +1,14 @@
 ## LLM
+### 2024 - [MetaMath: Bootstrap Your Own Mathematical Questions for Large Language Models](https://openreview.net/forum?id=N8N0hgNDRt)
+  * 概述：把 gsm8k 和 math 的训练集，一道题增广成十道，MetaMath-7B，gsm8k 66.5%，涨 12 个点
+  * 背景：ChatGPT 等闭源模型做数学题做的挺好，LLaMA-2 相对有差距。当前流行的两类方法是 prompt-based 和 finetuning-based，前者以 COT 为代表，本文属于后一类
+  * 出发点：1. 对于一个底层的元知识，包装成一道数学题只是一个 view（一个问题背景、一个推理方向），可以考虑其它 view 的数据（比如先前有人做多语言的 gsm8k）2. 举方法能扩大训练集的多样性，使得模型泛化效果更好
+  * AnsAug：先 few-shot 让模型做训练集，检验正确性，这样得到了一些可能比 gt 更适合 LLM 学习的推理路径
+  * 2. QuestionAug：1）让 LLM 重写出一个同义题目，因为 ChatGPT 做 GSM8K 级别题的正确率在 80 左右，所以可以让 chatGPT 来做几次，看一下题目重写是不是复合原意
+      2）把条件中的一个数字变成变量 x，给出最终答案，让模型推断 x 是什么。这里有两种格式上稍微不同的包装形式，分别命名为 SV 方法和 FOBAR 方法。
+  * 关于模型能力决定于预训练的假说，作者认为现在的实验表明 MetaMath 能更好地激发模型的数学能力，而进一步提出说低困惑度的训练数据可能更有益
+  * 作者构建了 GSM8K-backward 来衡量模型的逆向推理水平，也衡量了一下不同长度的 gsm8k 题的解决水平，metamath 训出来的模型有很大的提升
+  * 一个反直觉的实验，对于 7B 模型来说，哪怕用 7k 条 chatGPT 生成的，答案错误的回答，都比用原始 gsm8k 训练集好
 ### 2024 - [Solving olympiad geometry without human demonstrations](https://www.nature.com/articles/s41586-023-06747-5)
   * 背景：像人类一样证明几何问题的搜索树，在“不加辅助线”的情形下是有限甚至小计算资源下可穷尽的，但加辅助线的方法是几乎无穷无尽的，这是几何定理证明器长期来的主要难点。
   * 本文构建了一个符号推断 + LLM 的证明系统。这套系统的测试集是从 IMO2000 以来的 30 个几何证明题（总几何题的75%，原因是其它题很难形式化表示），GPT4 做出的题目数是 0。AlphaGeometry (AG) 做出了 25 题，并且对其中某道题的前提进行了减少。做不出来的主要原因是，人类会采用更 high-level 的证明手段（我理解是用一些现成定理）：在相对简单的问题上，人类平均得分和AI生成的证明长度之间没有显著相关性。AG 给出的证明可以很容易地转成自然语言，得到了 IMO 评审组的认可。
